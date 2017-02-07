@@ -192,7 +192,7 @@ def maybe_download_and_extract():
 def cheack_image(image_file):
   maybe_download_and_extract()
   image = (image_file if image_file else
-           os.path.join(FLAGS.model_dir, 'cropped_panda.jpg'))
+           os.path.join(FLAGS.model_dir, '1.jpg'))
   return run_inference_on_image(image)
 
 # def main(_):
@@ -200,7 +200,7 @@ def cheack_image(image_file):
 #   # image = (FLAGS.image_file if FLAGS.image_file else
 #   #          os.path.join(FLAGS.model_dir, 'cropped_panda.jpg'))
 #   # run_inference_on_image(image)
-#   print(cheack_image('/tmp/imagenet/1.jpg'))
+#   print(cheack_image('img/1.jpg'))
 
 
 
@@ -215,7 +215,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '--model_dir',
       type=str,
-      default='/tmp/imagenet',
+      default='img/',
       help="""\
       Path to classify_image_graph_def.pb,
       imagenet_synset_to_human_label_map.txt, and

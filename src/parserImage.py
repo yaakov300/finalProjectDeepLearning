@@ -4,8 +4,13 @@ import os
 import numpy as np
 import cPickle
 
+
 #image size = size * size
 size = 28
+
+#
+training_size = 5/6
+testing_size = 1/6
 
 #source images dir
 src_dir = "img"
@@ -19,7 +24,6 @@ def write_pkl_file(list, file_name):
     fileObject = open(file_name, 'wb')
 
     # this writes the object a to the
-    # file named 'testfile'
     cPickle.dump(list, fileObject)
 
     # here we close the fileObject
@@ -38,13 +42,26 @@ def load_pkl_data(file_name):
 
 
 def createPklFile():
-    image_list = []
-    type_list = []
+    test_image_list = []
+    test_type_list = []
+    training_image_list = []
+    training_type_list = []
+    validation_image_list = []
+    validation_type_list = []
+
+    # each folder in src_dir is a category
     categories = get_immediate_subdirectories(src_dir)
     for category in range(len(categories)):
-        for jpgfile in glob.iglob(os.path.join(src_dir+"/"+categories[category], "*.jpg")):
+        images =glob.glob(os.path.join(src_dir + "/" + categories[category], "*.jpg"))
+        number_of_file = len(images)
+        # set training size 0.83% of the image category
+        training_size = np.math.ceil(0.83 * number_of_file)
+        print training_size
+        testing_size = number_of_file - training_size
+        print testing_size
+        for jpgfile in range(number_of_file):
             # open image and convert to Gray level
-            img = Image.open(jpgfile).convert('L')
+            img = Image.open(images[jpgfile]).convert('L')
             # resize image
             img = img.resize((size, size), Image.ANTIALIAS)
 
@@ -52,19 +69,29 @@ def createPklFile():
             pix_val = np.array(list(img.getdata())).astype('float')
             pix_val = pix_val/np.linalg.norm(pix_val)
 
-            image_list.append(pix_val)
-            type_list.append(category)
+            if jpgfile+1 <= training_size :
+                training_image_list.append(pix_val)
+                training_type_list.append(category)
+                print "training"
+
+                if jpgfile+1 <= testing_size :
+                    validation_image_list.append(pix_val)
+                    validation_type_list.append(category)
+                    print "validation"
+
+            else:
+                test_image_list.append(pix_val)
+                test_type_list.append(category)
+                print "test"
+
 
     # convert to nappy array
-    image_list = np.array(image_list,dtype='float32')
-    type_list = np.array(type_list)
+    training_data = (np.array(training_image_list,dtype='float32'),np.array(training_type_list))
+    validation_data = (np.array(validation_image_list,dtype='float32'),np.array(validation_type_list))
+    test_data = (np.array(test_image_list,dtype='float32'),np.array(test_type_list))
 
-    training_data = (image_list,type_list)
-    alidation_data = (image_list,type_list)
-    test_data = (image_list,type_list)
-    print training_data
 
-    write_pkl_file((training_data,alidation_data,test_data),os.path.join("../data",pkl_file_name))
+    write_pkl_file((training_data,validation_data,test_data),os.path.join("../data",pkl_file_name))
 
 def get_immediate_subdirectories(a_dir):
     return [name for name in os.listdir(a_dir)

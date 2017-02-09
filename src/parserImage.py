@@ -6,7 +6,7 @@ import cPickle
 
 
 #image size = size * size
-size = 28
+size = 60
 
 #
 training_size = 5/6
@@ -54,7 +54,7 @@ def createPklFile():
     for category in range(len(categories)):
         images =glob.glob(os.path.join(src_dir + "/" + categories[category], "*.jpg"))
         number_of_file = len(images)
-        # set training size 0.83% of the image category
+        # set training size 83% of the image category
         training_size = np.math.ceil(0.83 * number_of_file)
         print training_size
         testing_size = number_of_file - training_size

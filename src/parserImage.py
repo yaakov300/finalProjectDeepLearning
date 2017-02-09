@@ -1,30 +1,49 @@
-import PIL
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-import Image, numpy
+import numpy
+import PIL.Image as Image
+import glob
+import os
 from numpy.linalg import norm
-from resizeimage import resizeimage
-#save matrix as image
-import scipy.misc
 
 #image size = size * size
 size = 5
-#open image
-img = Image.open('testimage.jpg')
-#resize image
-img = img.resize((size, size), Image.ANTIALIAS)
-#convert to Gray level
-matrix = numpy.asarray(img.convert('L'))
-#normalize matrix
-linfnorm = norm(matrix, axis=1, ord=np.inf)
-matrix = matrix.astype(np.float) / linfnorm[:,None]
 
-matrix1 = np.reshape(matrix, (size*size, 1))
+#source images dir
+src_dir = "img"
+image_list = []
+type_list = []
 
-vectorRezulte = x = np.array([1,0,0,0])
+for jpgfile in glob.iglob(os.path.join(src_dir, "*.jpg")):
+    # open image
+    img = Image.open(jpgfile)
+    # resize image
+    img = img.resize((size, size), Image.ANTIALIAS)
+    # convert to Gray level
+    img = img.convert('L')
+    pix_val = list(img.getdata())
+    print pix_val[:, None]
+    print ("===========\n")
+    matrix = numpy.asarray(img)
+    # print matrix
 
-print matrix1
 
-plt.imshow(matrix, cmap=plt.get_cmap('gray'))
-plt.show()
+    # normalize matrix
+    linfnorm = norm(matrix, axis=1, ord=np.inf)
+    print linfnorm[:, None]
+
+
+    matrix = matrix.astype(np.float) / linfnorm[:, None]
+
+    image_list.append(matrix)
+    type_list.append(0)
+# print image_list
+training_data = [image_list,numpy.asarray(type_list)]
+# print training_data
+# matrix1 = np.reshape(matrix, (size*size, 1))
+
+# vectorRezulte = x = np.array([1,0,0,0])
+
+# print matrix1
+
+# imshow(matrix, cmap=get_cmap('gray'))
+# show()

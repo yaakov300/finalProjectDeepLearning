@@ -10,7 +10,7 @@ size = 28
 #source images dir
 src_dir = "img"
 
-pkl_file_name = "source.pkl";
+pkl_file_name = "datasetSY.pkl";
 
 
 
@@ -40,36 +40,43 @@ def load_pkl_data(file_name):
 def createPklFile():
     image_list = []
     type_list = []
+    categories = get_immediate_subdirectories(src_dir)
+    for category in range(len(categories)):
+        for jpgfile in glob.iglob(os.path.join(src_dir+"/"+categories[category], "*.jpg")):
+            # open image and convert to Gray level
+            img = Image.open(jpgfile).convert('L')
+            # resize image
+            img = img.resize((size, size), Image.ANTIALIAS)
 
-    for jpgfile in glob.iglob(os.path.join(src_dir, "*.jpg")):
-        # open image and convert to Gray level
-        img = Image.open(jpgfile).convert('L')
-        # resize image
-        img = img.resize((size, size), Image.ANTIALIAS)
+            # normalize image
+            pix_val = np.array(list(img.getdata())).astype('float')
+            pix_val = pix_val/np.linalg.norm(pix_val)
 
-        # normalize image
-        pix_val = np.array(list(img.getdata())).astype('float')
-        pix_val = pix_val/np.linalg.norm(pix_val)
+            image_list.append(pix_val)
+            type_list.append(category)
 
-        image_list.append(pix_val)
-        type_list.append(1)
-
+    # convert to nappy array
     image_list = np.array(image_list,dtype='float32')
     type_list = np.array(type_list)
 
-
     training_data = (image_list,type_list)
-    alidation_data = (image_list,np.array([2,2]))
-    test_data = (image_list,np.array([3,3]))
+    alidation_data = (image_list,type_list)
+    test_data = (image_list,type_list)
     print training_data
 
-    write_bucket_pkl((training_data,alidation_data,test_data),pkl_file_name)
+    write_pkl_file((training_data,alidation_data,test_data),os.path.join("../data",pkl_file_name))
 
+def get_immediate_subdirectories(a_dir):
+    return [name for name in os.listdir(a_dir)
+            if os.path.isdir(os.path.join(a_dir, name))]
 
+createPklFile()
+def init():
 
-print('-----------\n')
+    print('-----------\n')
 
+    createPklFile(["sss","bbb"])
 
-tr_d, va_d, te_d = load_pkl_data(pkl_file_name)
+    tr_d, va_d, te_d = load_pkl_data(pkl_file_name)
 
 

@@ -39,8 +39,11 @@ def load_data():
     That's done in the wrapper function ``load_data_wrapper()``, see
     below.
     """
-    f = gzip.open('../data/mnist.pkl.gz', 'rb')
+    f = open('../data/datasetSY.pkl', 'rb')
     training_data, validation_data, test_data = cPickle.load(f)
+    print training_data
+    print validation_data
+    print test_data
     f.close()
     return (training_data, validation_data, test_data)
 

@@ -1,11 +1,16 @@
 import re
 
-uniprotFile=open("vca_shape_learning.txt") #read original alignment file
-uniprotFileContent=uniprotFile.read()
+file = open("vca_shape_learning.txt") #read original alignment file
+fileContent = file.read()
 
-myre = re.compile("(?<!:)ImageFileName")
-uniprotFileList = myre.split(uniprotFileContent)
+imageReg = re.compile("(?<!:)ImageFileName")
+imageList = imageReg.split(fileContent)[1:]
 
+for image in imageList:
+    templetReg = re.compile("(?<!:)Normal Template results")
+    templetList = templetReg.split(image)
+    for templet in templetList[1:]:
+        pass
 
-print len(uniprotFileList)
-print uniprotFileList[751]
+print len(imageList)
+print imageList[0]

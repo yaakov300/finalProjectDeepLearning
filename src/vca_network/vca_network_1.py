@@ -1,8 +1,8 @@
-import mnist_loader
+import loader
 import network
 
 #add data
-training_data, validation_data, test_data = mnist_loader.load_data_wrapper()
+training_data, validation_data, test_data = loader.load_data_wrapper()
 #init neural networks
 net = network.Network([784, 30, 10])
 #start tarnining

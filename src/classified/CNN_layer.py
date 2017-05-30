@@ -1,5 +1,6 @@
 import tensorflow as tf
 
+
 def new_conv_layer(input, num_input_channels, filter_size, num_filters, use_pooling=True):
 
     shape = [filter_size, filter_size,  num_input_channels, num_filters]
@@ -22,3 +23,11 @@ def new_conv_layer(input, num_input_channels, filter_size, num_filters, use_pool
                                padding='SAME')
     layer = tf.nn.relu(layer)
     return layer, weights
+
+
+def flatten_layer(layer):
+    layer_shape = layer.get_shape()
+    num_features = layer_shape[1:4].num_elements()
+
+    layer_flat = tf.reshape(layer, [-1, num_features])
+    return layer_flat, num_features

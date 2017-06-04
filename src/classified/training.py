@@ -1,4 +1,5 @@
 from CNN_layer import *
+import dataset
 
 # Number of color channels for the images: 1 channel for gray-scale.
 num_channels = 3
@@ -13,7 +14,30 @@ num_classes = len(classes)
 #TODO repalce None wirh batch size.
 batch_size = 16
 
+# validation split
+validation_size = .2
+
+# how long to wait after validation loss stops improving before terminating training
+early_stopping = None  # use None if you don't want to implement early stoping
+
+#files path
+train_path='training_data'
+test_path='testing_data'
+
+data = dataset.read_train_sets(train_path, img_size, classes, validation_size=validation_size)
+test_images, test_ids = dataset.read_test_set(test_path, img_size,classes)
+
+print("Size of:")
+print("- Training-set:\t\t{}".format(len(data.train.labels)))
+print("- Test-set:\t\t{}".format(len(test_images)))
+print("- Validation-set:\t{}".format(len(data.valid.labels)))
+
+# Size of image when flattened to a single dimension
 img_size_flat = img_size * img_size * num_channels
+
+# Tuple with height and width of images used to reshape arrays.
+img_shape = (img_size, img_size)
+
 x = tf.placeholder(tf.float32, shape=[None, img_size_flat], name='x')
 x_image = tf.reshape(x, [-1, img_size, img_size, num_channels])
 
@@ -71,4 +95,69 @@ layer_fc2 = new_fc_layer(input=layer_fc1,
                          num_outputs=num_classes,
                          use_relu=False)
 
+# predicted probability of each class for each input image.
+y_pred = tf.nn.softmax(layer_fc2)
+y_pred_cls = tf.argmax(y_pred, dimension=1)
+
 # ***---------- define network layer end ----------***
+
+session = tf.Session()
+
+# cost function
+cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits=layer_fc2,                                                    labels=y_true)
+cost = tf.reduce_mean(cross_entropy)
+
+optimizer = tf.train.AdamOptimizer(learning_rate=1e-4).minimize(cost)
+
+correct_prediction = tf.equal(y_pred_cls, y_true_cls)
+accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+
+session.run(tf.global_variables_initializer()) # for newer versions
+#session.run(tf.initialize_all_variables()) # for older versions
+train_batch_size = batch_size
+
+
+def print_progress(epoch, feed_dict_train, feed_dict_validate, val_loss):
+    # Calculate the accuracy on the training-set.
+    acc = session.run(accuracy, feed_dict=feed_dict_train)
+    val_acc = session.run(accuracy, feed_dict=feed_dict_validate)
+    msg = "Epoch {0} --- Training Accuracy: {1:>6.1%}, Validation Accuracy: {2:>6.1%}, Validation Loss: {3:.3f}"
+    print(msg.format(epoch + 1, acc, val_acc, val_loss))
+
+
+total_iterations = 0
+
+
+def optimize(num_iterations):
+    global total_iterations
+
+    best_val_loss = float("inf")
+    patience = 0
+
+    for i in range(total_iterations,
+                   total_iterations + num_iterations):
+
+        x_batch, y_true_batch, _, cls_batch = data.train.next_batch(train_batch_size)
+
+        x_valid_batch, y_valid_batch, _, valid_cls_batch = data.valid.next_batch(train_batch_size)
+
+        x_batch = x_batch.reshape(train_batch_size, img_size_flat)
+        x_valid_batch = x_valid_batch.reshape(train_batch_size, img_size_flat)
+        feed_dict_train = {x: x_batch,
+                           y_true: y_true_batch}
+
+        feed_dict_validate = {x: x_valid_batch,
+                              y_true: y_valid_batch}
+
+        session.run(optimizer, feed_dict=feed_dict_train)
+
+        if i % int(data.train.num_examples / batch_size) == 0:
+            val_loss = session.run(cost, feed_dict=feed_dict_validate)
+            epoch = int(i / int(data.train.num_examples / batch_size))
+
+            print_progress(epoch, feed_dict_train, feed_dict_validate, val_loss)
+
+    total_iterations += num_iterations
+
+optimize(num_iterations=3000)
+# print_validation_accuracy()

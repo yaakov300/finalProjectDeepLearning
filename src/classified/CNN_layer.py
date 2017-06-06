@@ -47,18 +47,7 @@ def new_fc_layer(input,
     return layer
 
 
-def new_fc_layer(input,
-                 num_inputs,
-                 num_outputs,
-                 use_relu=True):
-    weights = new_weights(shape=[num_inputs, num_outputs])
-    biases = new_biases(length=num_outputs)
 
-    layer = tf.matmul(input, weights) + biases
-    if use_relu:
-        layer = tf.nn.relu(layer)
-
-    return layer
 
 
 def new_weights(shape):

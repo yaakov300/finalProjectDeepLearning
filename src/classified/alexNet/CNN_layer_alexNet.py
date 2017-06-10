@@ -5,7 +5,7 @@ def new_conv_layer(input, filter_size, num_filters, num_input_channels,
                    use_pooling=True, pooling_filter_size= "NONE", pooling_strides_size= "NONE"):
     shape = [filter_size, filter_size, num_input_channels, num_filters]
     weights = new_weights(shape=shape)
-    biases = new_biases(length=96)
+    biases = new_biases(length=num_filters)
     stride = [1, 4, 4, 1]
 
     layer = tf.nn.conv2d(input=input,

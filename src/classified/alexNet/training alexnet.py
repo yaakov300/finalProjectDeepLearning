@@ -152,11 +152,12 @@ session = tf.Session()
 #sess.run(tf.global_variables_initializer())
 
 # cost function
-cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits=layer_fc2, labels=y_true)
+cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits=layer_fc3, labels=y_true)
 cost = tf.reduce_mean(cross_entropy)
 
 # optimizer gradient descent optimizier
 optimizer = tf.train.GradientDescentOptimizer(0.01).minimize(cost)
+# for print accuracy
 correct_prediction = tf.equal(y_pred_cls, y_true_cls)
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
@@ -167,27 +168,73 @@ def print_progress(epoch, feed_dict_train, feed_dict_validate, val_loss):
     # Calculate the accuracy on the training-set.
     acc = session.run(accuracy, feed_dict=feed_dict_train)
     val_acc = session.run(accuracy, feed_dict=feed_dict_validate)
+
     msg = "Epoch {0} --- Training Accuracy: {1:>6.1%}, Validation Accuracy: {2:>6.1%}, Validation Loss: {3:.3f}"
     print(msg.format(epoch + 1, acc, val_acc, val_loss))
 
-print "x: {x}".format(x = sess.run(tf.shape(x)))
-print "x_image: {x_image}".format(x_image = sess.run(tf.shape(x_image)))
-print "weights_conv1: {weights_conv1}".format(weights_conv1= sess.run(tf.shape(weights_conv1)))
-print "layer_conv1: {layer_conv1}".format(layer_conv1 = sess.run(tf.shape(layer_conv1)))
-print "weights_conv2: {weights_conv2}".format(weights_conv2= sess.run(tf.shape(weights_conv2)))
-print "layer_conv2: {layer_conv2}".format(layer_conv2 = sess.run(tf.shape(layer_conv2)))
-print "weights_conv3: {weights_conv3}".format(weights_conv3= sess.run(tf.shape(weights_conv3)))
-print "layer_conv3: {layer_conv3}".format(layer_conv3 = sess.run(tf.shape(layer_conv3)))
-print "weights_conv4: {weights_conv4}".format(weights_conv4= sess.run(tf.shape(weights_conv4)))
-print "layer_conv4: {layer_conv4}".format(layer_conv4 = sess.run(tf.shape(layer_conv4)))
-print "weights_conv5: {weights_conv5}".format(weights_conv5= sess.run(tf.shape(weights_conv5)))
-print "layer_conv5: {layer_conv5}".format(layer_conv5 = sess.run(tf.shape(layer_conv5)))
-print "layer_flat: {layer_flat}".format(layer_flat = sess.run(tf.shape(layer_flat)))
-print "layer_fc1: {layer_fc1}".format(layer_fc1 = sess.run(tf.shape(layer_fc1)))
-print "layer_fc2: {layer_fc2}".format(layer_fc2 = sess.run(tf.shape(layer_fc2)))
-print "layer_fc3: {layer_fc3}".format(layer_fc3 = sess.run(tf.shape(layer_fc3)))
-print "y_pred: {y_pred}".format(y_pred = sess.run(tf.shape(y_pred)))
-print "y_pred_cls: {y_pred_cls}".format(y_pred_cls = sess.run(tf.shape(y_pred_cls)))
+
+total_iterations = 0
+
+def optimize(num_iterations):
+    global total_iterations
+
+    best_val_loss = float("inf")
+    patience = 0
+
+    for i in range(total_iterations,
+                   total_iterations + num_iterations):
+
+        x_batch, y_true_batch, _, cls_batch = data.train.next_batch(train_batch_size)
+
+        x_valid_batch, y_valid_batch, _, valid_cls_batch = data.valid.next_batch(train_batch_size)
+
+        x_batch = x_batch.reshape(train_batch_size, img_size_flat)
+        x_valid_batch = x_valid_batch.reshape(train_batch_size, img_size_flat)
+        feed_dict_train = {x: x_batch,
+                           y_true: y_true_batch}
+
+        feed_dict_validate = {x: x_valid_batch,
+                              y_true: y_valid_batch}
+
+        session.run(optimizer, feed_dict=feed_dict_train)
+
+        if i % int(data.train.num_examples / batch_size) == 0:
+            val_loss = session.run(cost, feed_dict=feed_dict_validate)
+            epoch = int(i / int(data.train.num_examples / batch_size))
+
+            print_progress(epoch, feed_dict_train, feed_dict_validate, val_loss)
+
+    total_iterations += num_iterations
+
+optimize(num_iterations=3000)
+
+
+
+
+
+
+
+
+
+def printShapeOfLayers():
+    print "x: {x}".format(x = session.run(tf.shape(x)))
+    print "x_image: {x_image}".format(x_image = session.run(tf.shape(x_image)))
+    print "weights_conv1: {weights_conv1}".format(weights_conv1= session.run(tf.shape(weights_conv1)))
+    print "layer_conv1: {layer_conv1}".format(layer_conv1 = session.run(tf.shape(layer_conv1)))
+    print "weights_conv2: {weights_conv2}".format(weights_conv2= session.run(tf.shape(weights_conv2)))
+    print "layer_conv2: {layer_conv2}".format(layer_conv2 = session.run(tf.shape(layer_conv2)))
+    print "weights_conv3: {weights_conv3}".format(weights_conv3= session.run(tf.shape(weights_conv3)))
+    print "layer_conv3: {layer_conv3}".format(layer_conv3 = session.run(tf.shape(layer_conv3)))
+    print "weights_conv4: {weights_conv4}".format(weights_conv4= session.run(tf.shape(weights_conv4)))
+    print "layer_conv4: {layer_conv4}".format(layer_conv4 = session.run(tf.shape(layer_conv4)))
+    print "weights_conv5: {weights_conv5}".format(weights_conv5= session.run(tf.shape(weights_conv5)))
+    print "layer_conv5: {layer_conv5}".format(layer_conv5 = session.run(tf.shape(layer_conv5)))
+    print "layer_flat: {layer_flat}".format(layer_flat = session.run(tf.shape(layer_flat)))
+    print "layer_fc1: {layer_fc1}".format(layer_fc1 = session.run(tf.shape(layer_fc1)))
+    print "layer_fc2: {layer_fc2}".format(layer_fc2 = session.run(tf.shape(layer_fc2)))
+    print "layer_fc3: {layer_fc3}".format(layer_fc3 = session.run(tf.shape(layer_fc3)))
+    print "y_pred: {y_pred}".format(y_pred = session.run(tf.shape(y_pred)))
+    print "y_pred_cls: {y_pred_cls}".format(y_pred_cls = session.run(tf.shape(y_pred_cls)))
 
 
 # input = tf.placeholder(tf.float32, [None, 28, 28, 3])

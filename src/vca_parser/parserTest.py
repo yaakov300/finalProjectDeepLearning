@@ -39,7 +39,7 @@ for image in imageList:
         for num in tmp.split(';'):
             templetArray.append(num)
 
-    typeArray.append(re.search('LearningClassId=(.*)',templetList[0]).group(1)[0]);
+    typeArray.append(int(re.search('LearningClassId=(.*)',templetList[0]).group(1)[0]));
     imageArray.append(np.array(templetArray))
 
 training_data_size = len(imageArray)* 5 / 7
@@ -60,9 +60,9 @@ test_image_data = imageArray[shuffle_indices[training_data_size+validation_data_
 test_type_data = typeArray[shuffle_indices[training_data_size+validation_data_size+1:]]
 
 # convert to nappy array
-training_data = (training_image_data,training_type_data)
-validation_data = (validation_image_data,validation_type_data)
-test_data = (test_image_data,test_type_data)
+training_data = (training_image_data,training_type_data.tolist())
+validation_data = (validation_image_data,validation_type_data.tolist())
+test_data = (test_image_data,test_type_data.tolist())
 
 write_pkl_file((training_data,validation_data,test_data), os.path.join("../../data", pkl_file_name))
 

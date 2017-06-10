@@ -1,28 +1,24 @@
 import tensorflow as tf
 
 
-def new_conv_layer(input, num_input_channels, filter_size, num_filters, use_pooling=True):
-
-    shape = [filter_size, filter_size,  num_input_channels, num_filters]
-
-    weights = new_weights(shape=shape)
-
-    biases = new_biases(length=num_filters)
+def new_conv_layer(input, conv_weights, conv_biases, conv_stride,
+                   use_pooling=True, pooling_filter_size= "NONE", pooling_strides_size= "NONE"):
 
     layer = tf.nn.conv2d(input=input,
-                         filter=weights,
-                         strides=[1, 1, 1, 1],
-                         padding='SAME')
+                         filter=conv_weights,
+                         strides=conv_stride,
+                         padding='VALID')
 
-    layer += biases
+    layer += conv_biases
 
     if use_pooling:
         layer = tf.nn.max_pool(value=layer,
-                               ksize=[1, 2, 2, 1],
-                               strides=[1, 2, 2, 1],
+                               ksize=pooling_filter_size, #[1, 2, 2, 1],
+                               strides=pooling_strides_size, #[1, 2, 2, 1],
                                padding='SAME')
+
     layer = tf.nn.relu(layer)
-    return layer, weights
+    return layer, conv_weights
 
 
 def flatten_layer(layer):
@@ -48,7 +44,7 @@ def new_fc_layer(input,
 
 
 def new_weights(shape):
-    return tf.Variable(tf.truncated_normal(shape, stddev=0.05))
+    return tf.Variable(tf.truncated_normal(shape, stddev=0.05)) # stddev -> The standard deviation
 
 def new_biases(length):
     return tf.Variable(tf.constant(0.05, shape=[length]))

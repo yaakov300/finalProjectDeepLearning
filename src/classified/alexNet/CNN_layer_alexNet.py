@@ -1,24 +1,28 @@
 import tensorflow as tf
 
 
-def new_conv_layer(input, conv_weights, conv_biases, conv_stride,
+def new_conv_layer(input, filter_size, num_filters, num_input_channels,
                    use_pooling=True, pooling_filter_size= "NONE", pooling_strides_size= "NONE"):
+    shape = [filter_size, filter_size, num_input_channels, num_filters]
+    weights = new_weights(shape=shape)
+    biases = new_biases(length=96)
+    stride = [1, 4, 4, 1]
 
     layer = tf.nn.conv2d(input=input,
-                         filter=conv_weights,
-                         strides=conv_stride,
+                         filter=weights,
+                         strides=stride,
                          padding='VALID')
 
-    layer += conv_biases
+    layer += biases
 
     if use_pooling:
         layer = tf.nn.max_pool(value=layer,
-                               ksize=pooling_filter_size, #[1, 2, 2, 1],
-                               strides=pooling_strides_size, #[1, 2, 2, 1],
+                               ksize=[1, pooling_filter_size, pooling_filter_size, 1],
+                               strides=[1, pooling_strides_size, pooling_strides_size, 1],
                                padding='SAME')
 
     layer = tf.nn.relu(layer)
-    return layer, conv_weights
+    return layer,weights
 
 
 def flatten_layer(layer):

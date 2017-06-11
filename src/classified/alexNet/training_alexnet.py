@@ -173,12 +173,16 @@ def print_progress(epoch, feed_dict_train, feed_dict_validate, val_loss):
     msg = "Epoch {0} --- Training Accuracy: {1:>6.1%}, Validation Accuracy: {2:>6.1%}, Validation Loss: {3:.3f}"
     print(msg.format(epoch + 1, acc, val_acc, val_loss))
 
+def saveSession(sess):
+    saver = tf.train.Saver()
+    # saver.save(sess, 'model/alexNet_model', global_step=1000)
+    saver.save(sess, 'model_files/alexNet_model')
 
 total_iterations = 0
 
 def optimize(num_iterations):
     global total_iterations
-
+    num_iterations_for_saving = 0
     best_val_loss = float("inf")
     patience = 0
 
@@ -204,16 +208,15 @@ def optimize(num_iterations):
             epoch = int(i / int(data.train.num_examples / batch_size))
 
             print_progress(epoch, feed_dict_train, feed_dict_validate, val_loss)
+            print "num_iterations_for_saving = {}".format(num_iterations_for_saving)
+            num_iterations_for_saving = 1 + num_iterations_for_saving
+            if num_iterations_for_saving == 6:
+                num_iterations_for_saving = 0
+                saveSession(session)
 
     total_iterations += num_iterations
 
 optimize(num_iterations=3000)
-
-
-
-
-
-
 
 
 
@@ -237,9 +240,3 @@ def printShapeOfLayers():
     print "y_pred: {y_pred}".format(y_pred = session.run(tf.shape(y_pred)))
     print "y_pred_cls: {y_pred_cls}".format(y_pred_cls = session.run(tf.shape(y_pred_cls)))
 
-
-# input = tf.placeholder(tf.float32, [None, 28, 28, 3])
-# padded_input = tf.pad(input, [[0, 0], [2, 2], [1, 1], [0, 0]], "CONSTANT")
-#
-# filter = tf.placeholder(tf.float32, [5, 5, 3, 16])
-# output = tf.nn.conv2d(padded_input, filter, strides=[1, 1, 1, 1], padding="VALID")

@@ -29,7 +29,7 @@ def main():
     # training phase: compute the average darknesses for each digit,
     # based on the training data
     avgs = avg_darknesses(training_data)
-    # testing phase: see how many of the test images are classified
+    # testing phase: see how many of the parser images are classified
     # correctly
     num_correct = sum(int(guess_digit(image, avgs) == digit)
                       for image, digit in zip(test_data[0], test_data[1]))

@@ -43,7 +43,7 @@ from theano.tensor.nnet import conv
 from theano.tensor.nnet import softmax
 from theano.tensor import shared_randomstreams
 from theano.tensor.signal import downsample
-"""ddddd"""
+
 # Activation functions for neurons
 def linear(z): return z
 def ReLU(z): return T.maximum(0.0, z)
@@ -109,7 +109,7 @@ class Network(object):
         training_x, training_y = training_data
         validation_x, validation_y = validation_data
         test_x, test_y = test_data
-
+        print training_data
         # compute number of minibatches for training, validation and testing
         num_training_batches = size(training_data)/mini_batch_size
         num_validation_batches = size(validation_data)/mini_batch_size
@@ -119,13 +119,16 @@ class Network(object):
         l2_norm_squared = sum([(layer.w**2).sum() for layer in self.layers])
         cost = self.layers[-1].cost(self)+\
                0.5*lmbda*l2_norm_squared/num_training_batches
+        print "--cost: {}".format(cost)
+        print "--self.params: {}".format(self.params)
         grads = T.grad(cost, self.params)
         updates = [(param, param-eta*grad)
                    for param, grad in zip(self.params, grads)]
-
+        print updates
         # define functions to train a mini-batch, and to compute the
-        # accuracy in validation and test mini-batches.
+        # accuracy in validation and parser mini-batches.
         i = T.lscalar() # mini-batch index
+        print i
         train_mb = theano.function(
             [i], cost, updates=updates,
             givens={
@@ -176,12 +179,12 @@ class Network(object):
                         if test_data:
                             test_accuracy = np.mean(
                                 [test_mb_accuracy(j) for j in xrange(num_test_batches)])
-                            print('The corresponding test accuracy is {0:.2%}'.format(
+                            print('The corresponding parser accuracy is {0:.2%}'.format(
                                 test_accuracy))
         print("Finished training network.")
         print("Best validation accuracy of {0:.2%} obtained at iteration {1}".format(
             best_validation_accuracy, best_iteration))
-        print("Corresponding test accuracy of {0:.2%}".format(test_accuracy))
+        print("Corresponding parser accuracy of {0:.2%}".format(test_accuracy))
 
 #### Define layer types
 

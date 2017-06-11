@@ -11,7 +11,7 @@ systematic way in the module ``deep_autoencoder``.
 
 # My Libraries
 from backprop2 import Network
-import mnist_loader 
+import loader
 
 # Third-party libraries
 import matplotlib
@@ -21,11 +21,11 @@ import numpy as np
 def autoencoder_results(hidden_units):
     """
     Train an autoencoder using the MNIST training data and plot the
-    results when the first ten MNIST test images are passed through
+    results when the first ten MNIST parser images are passed through
     the autoencoder.
     """
     training_data, test_inputs, actual_test_results = \
-        mnist_loader.load_data_nn()
+        loader.load_data_nn()
     net = train_autoencoder(hidden_units, training_data)
     plot_test_results(net, test_inputs)
 
@@ -38,7 +38,7 @@ def train_autoencoder(hidden_units, training_data):
 
 def plot_test_results(net, test_inputs):
     """
-    Plot the results after passing the first ten test MNIST digits through
+    Plot the results after passing the first ten parser MNIST digits through
     the autoencoder ``net``."""
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -64,7 +64,7 @@ def classifier(hidden_units, n_unlabeled_inputs, n_labeled_inputs):
     use of the unlabeled data.
     """
     training_data, test_inputs, actual_test_results = \
-        mnist_loader.load_data_nn()
+        loader.load_data_nn()
     print "\nUsing pretraining and %s items of unlabeled data" %\
         n_unlabeled_inputs
     net_ae = train_autoencoder(hidden_units, training_data[:n_unlabeled_inputs])
@@ -73,11 +73,11 @@ def classifier(hidden_units, n_unlabeled_inputs, n_labeled_inputs):
     net_c.weights = net_ae.weights[:1]+\
         [np.random.randn(10, hidden_units)/np.sqrt(10)]
     net_c.SGD(training_data[-n_labeled_inputs:], 300, 10, 0.01, 0.05)
-    print "Result on test data: %s / %s" % (
+    print "Result on parser data: %s / %s" % (
         net_c.evaluate(test_inputs, actual_test_results), len(test_inputs))
     print "Training a network with %s items of training data" % n_labeled_inputs
     net = Network([784, hidden_units, 10])
     net.SGD(training_data[-n_labeled_inputs:], 300, 10, 0.01, 0.05)
-    print "Result on test data: %s / %s" % (
+    print "Result on parser data: %s / %s" % (
         net.evaluate(test_inputs, actual_test_results), len(test_inputs))
     return net_c

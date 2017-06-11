@@ -138,7 +138,7 @@ class Network(object):
         representing the training inputs and the desired outputs.  The
         other non-optional parameters are self-explanatory, as is the
         regularization parameter ``lmbda``.  The method also accepts
-        ``evaluation_data``, usually either the validation or test
+        ``evaluation_data``, usually either the validation or parser
         data.  We can monitor the cost and accuracy on either the
         evaluation data or the training data, by setting the
         appropriate flags.  The method returns a tuple containing four
@@ -247,7 +247,7 @@ class Network(object):
         final layer has the highest activation.
 
         The flag ``convert`` should be set to False if the data set is
-        validation or test data (the usual case), and to True if the
+        validation or parser data (the usual case), and to True if the
         data set is the training data. The need for this flag arises
         due to differences in the way the results ``y`` are
         represented in the different data sets.  In particular, it
@@ -275,7 +275,7 @@ class Network(object):
         """Return the total cost for the data set ``data``.  The flag
         ``convert`` should be set to False if the data set is the
         training data (the usual case), and to True if the data set is
-        the validation or test data.  See comments on the similar (but
+        the validation or parser data.  See comments on the similar (but
         reversed) convention for the ``accuracy`` method, above.
         """
         cost = 0.0

@@ -91,7 +91,7 @@ class Network(object):
                    for param, grad in zip(self.params, grads)]
 
         # define functions to train a mini-batch, and to compute the
-        # accuracy in validation and test mini-batches.
+        # accuracy in validation and parser mini-batches.
         i = T.lscalar() # mini-batch index
         train_mb = theano.function(
             [i], cost, updates=updates,
@@ -143,12 +143,12 @@ class Network(object):
                         if test_data:
                             test_accuracy = np.mean(
                                 [test_mb_accuracy(j) for j in xrange(num_test_batches)])
-                            print('The corresponding test accuracy is {0:.2%}'.format(
+                            print('The corresponding parser accuracy is {0:.2%}'.format(
                                 test_accuracy))
         print("Finished training network.")
         print("Best validation accuracy of {0:.2%} obtained at iteration {1}".format(
             best_validation_accuracy, best_iteration))
-        print("Corresponding test accuracy of {0:.2%}".format(test_accuracy))
+        print("Corresponding parser accuracy of {0:.2%}".format(test_accuracy))
 
 #### Define layer types
 

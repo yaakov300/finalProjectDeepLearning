@@ -18,7 +18,7 @@ import numpy as np
 
 def load_data():
     """Return the MNIST data as a tuple containing the training data,
-    the validation data, and the test data.
+    the validation data, and the parser data.
 
     The ``training_data`` is returned as a tuple with two entries.
     The first entry contains the actual training images.  This is a
@@ -39,11 +39,16 @@ def load_data():
     That's done in the wrapper function ``load_data_wrapper()``, see
     below.
     """
-    f = open('../data/datasetSY.pkl', 'rb')
+    # f = open('../data/datasetSY.pkl', 'rb')
+    # training_data, validation_data, test_data = cPickle.load(f)
+    # print training_data
+    # print validation_data
+    # print test_data
+    # f.close()
+    # return (training_data, validation_data, test_data)
+
+    f = gzip.open('../data/mnist.pkl.gz', 'rb')
     training_data, validation_data, test_data = cPickle.load(f)
-    print training_data
-    print validation_data
-    print test_data
     f.close()
     return (training_data, validation_data, test_data)
 
@@ -65,16 +70,26 @@ def load_data_wrapper():
     corresponding to ``x``.
 
     Obviously, this means we're using slightly different formats for
-    the training data and the validation / test data.  These formats
+    the training data and the validation / parser data.  These formats
     turn out to be the most convenient for use in our neural network
     code."""
+    # tr_d, va_d, te_d = load_data()
+    # print te_d
+    # training_inputs = [np.reshape(x, (3600, 1)) for x in tr_d[0]]
+    # training_results = [vectorized_result(y) for y in tr_d[1]]
+    # training_data = zip(training_inputs, training_results)
+    # validation_inputs = [np.reshape(x, (3600, 1)) for x in va_d[0]]
+    # validation_data = zip(validation_inputs, va_d[1])
+    # test_inputs = [np.reshape(x, (3600, 1)) for x in te_d[0]]
+    # test_data = zip(test_inputs, te_d[1])
+    # return (training_data, validation_data, test_data)
     tr_d, va_d, te_d = load_data()
-    training_inputs = [np.reshape(x, (3600, 1)) for x in tr_d[0]]
+    training_inputs = [np.reshape(x, (784, 1)) for x in tr_d[0]]
     training_results = [vectorized_result(y) for y in tr_d[1]]
     training_data = zip(training_inputs, training_results)
-    validation_inputs = [np.reshape(x, (3600, 1)) for x in va_d[0]]
+    validation_inputs = [np.reshape(x, (784, 1)) for x in va_d[0]]
     validation_data = zip(validation_inputs, va_d[1])
-    test_inputs = [np.reshape(x, (3600, 1)) for x in te_d[0]]
+    test_inputs = [np.reshape(x, (784, 1)) for x in te_d[0]]
     test_data = zip(test_inputs, te_d[1])
     return (training_data, validation_data, test_data)
 

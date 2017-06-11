@@ -10,7 +10,7 @@ descriptions given by two different autoencoders.
 #### Libraries
 # My libraries
 from backprop2 import Network, sigmoid_vec
-import mnist_loader
+import loader
 
 # Third-party libraries
 import matplotlib
@@ -26,7 +26,7 @@ SIZE = 5000
 HIDDEN = 30
 
 print "\nGenerating training data"
-training_data, _, _ = mnist_loader.load_data_nn()
+training_data, _, _ = loader.load_data_nn()
 td_1 = [(x, x) for x, _ in training_data[0:SIZE]]
 td_2 = [(x, x) for x, _ in training_data[12500:12500+SIZE]]
 td_3 = [x for x, _ in training_data[25000:25000+SIZE]]

@@ -196,9 +196,9 @@ def double_fc_dropout(p0, p1, p2, repetitions):
 
 def ensemble(nets): 
     """Takes as input a list of nets, and then computes the accuracy on
-    the test data when classifications are computed by taking a vote
+    the parser data when classifications are computed by taking a vote
     amongst the nets.  Returns a tuple containing a list of indices
-    for test data which is erroneously classified, and a list of the
+    for parser data which is erroneously classified, and a list of the
     corresponding erroneous predictions.
 
     Note that this is a quick-and-dirty kluge: it'd be more reusable

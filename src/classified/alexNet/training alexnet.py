@@ -143,7 +143,8 @@ layer_fc3 = new_fc_layer(input=layer_fc2,
                          num_outputs=num_classes,
                          use_relu=False)
 
-y_pred = tf.nn.softmax(layer_fc3)
+#y_pred = tf.nn.softmax(layer_fc3)
+y_pred = tf.nn.softmax(layer_fc3,name='y_pred')
 y_pred_cls = tf.argmax(y_pred, dimension=1)
 
 

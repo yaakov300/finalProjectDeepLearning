@@ -17,7 +17,7 @@ def svm_baseline():
     # train
     clf = svm.SVC()
     clf.fit(training_data[0], training_data[1])
-    # test
+    # parser
     predictions = [int(a) for a in clf.predict(test_data[0])]
     num_correct = sum(int(a == y) for a, y in zip(predictions, test_data[1]))
     print "Baseline classifier using an SVM."

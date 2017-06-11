@@ -46,7 +46,7 @@ training_data_size = len(imageArray)* 5 / 7
 validation_data_size = (len(imageArray)-training_data_size)/2
 print training_data_size
 # Randomly shuffle data
-np.random.seed(training_data_size)
+# np.random.seed(training_data_size)
 shuffle_indices = np.random.permutation(np.arange(len(imageArray)))
 imageArray = np.array(imageArray,dtype='float32')
 typeArray = np.array(typeArray)

@@ -6,7 +6,7 @@ import cPickle
 
 
 #image size = size * size
-size = 5
+size = 3
 
 #
 training_size = 5/6
@@ -51,7 +51,6 @@ def createPklFile():
 
     # each folder in src_dir is a category
     categories = get_immediate_subdirectories(src_dir)
-    print "categories : {}".format(categories)
     for category in range(len(categories)):
         images =glob.glob(os.path.join(src_dir + "/" + categories[category], "*.jpg"))
         number_of_file = len(images)
@@ -81,19 +80,19 @@ def createPklFile():
                     print "validation"
 
             else:
-                test_image_list.append(pix_val)
-                test_type_list.append(category)
-                print "parser"
+                if category == 1 :
+                    test_image_list.append(pix_val)
+                    test_type_list.append(category)
+                    print "test"
 
 
     # convert to nappy array
     training_data = (np.array(training_image_list,dtype='float32'),np.array(training_type_list))
-    print "training_data : \n {}".format(training_data)
     validation_data = (np.array(validation_image_list,dtype='float32'),np.array(validation_type_list))
     test_data = (np.array(test_image_list,dtype='float32'),np.array(test_type_list))
 
 
-    #write_pkl_file((training_data,validation_data,test_data),os.path.join("../data",pkl_file_name))
+    write_pkl_file((training_data,validation_data,test_data),os.path.join("../data",pkl_file_name))
 
 def get_immediate_subdirectories(a_dir):
     return [name for name in os.listdir(a_dir)

@@ -46,9 +46,9 @@ def load_test(test_path, image_size, classes):
         for fl in files:
             flbase = os.path.basename(fl)
             print(fl)
-            img = cv2.imread(fl)
+            image = cv2.imread(fl)
             image = cv2.resize(image, (image_size, image_size), 0, 0, cv2.INTER_LINEAR)
-            X_test.append(img)
+            X_test.append(image)
             X_test_id.append(flbase)
 
             ### because we're not creating a DataSet object for the test images, normalization happens here

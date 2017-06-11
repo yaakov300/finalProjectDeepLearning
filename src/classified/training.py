@@ -21,8 +21,8 @@ validation_size = .2
 early_stopping = None  # use None if you don't want to implement early stoping
 
 #files path
-train_path='training_data'
-test_path='testing_data'
+train_path='../data/training_data'
+test_path='../data/testing_data'
 
 data = dataset.read_train_sets(train_path, img_size, classes, validation_size=validation_size)
 test_images, test_ids = dataset.read_test_set(test_path, img_size,classes)

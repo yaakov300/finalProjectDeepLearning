@@ -6,7 +6,7 @@ import cPickle
 
 
 #image size = size * size
-size = 60
+size = 3
 
 #
 training_size = 5/6
@@ -80,9 +80,10 @@ def createPklFile():
                     print "validation"
 
             else:
-                test_image_list.append(pix_val)
-                test_type_list.append(category)
-                print "test"
+                if category == 1 :
+                    test_image_list.append(pix_val)
+                    test_type_list.append(category)
+                    print "test"
 
 
     # convert to nappy array

@@ -2,6 +2,7 @@ import os
 import glob
 import numpy as np
 import cv2
+from PIL import Image
 from sklearn.utils import shuffle
 
 
@@ -153,3 +154,5 @@ def read_train_sets(train_path, image_size, classes, validation_size=0):
 def read_test_set(test_path, image_size,classes):
   images, ids  = load_test(test_path, image_size,classes)
   return images, ids
+
+def save_pkl_file()

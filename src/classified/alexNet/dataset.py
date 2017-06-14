@@ -37,14 +37,15 @@ def load_train(train_path, image_size, classes):
 
 def load_test(test_path, image_size, classes):
     labels = []
+    X_test = []
+    X_test_id = []
 
     for class_name in classes:
         index = classes.index(class_name)
         path = os.path.join(test_path, class_name, '*g')
         files = sorted(glob.glob(path))
 
-        X_test = []
-        X_test_id = []
+
         print("Reading test images")
         for fl in files:
             flbase = os.path.basename(fl)
@@ -57,9 +58,10 @@ def load_test(test_path, image_size, classes):
             label[index] = 1.0
             labels.append(label)
             ### because we're not creating a DataSet object for the test images, normalization happens here
-        X_test = np.array(X_test, dtype=np.uint8)
-        X_test = X_test.astype('float32')
-        X_test = X_test / 255
+            print len(X_test)
+    X_test = np.array(X_test, dtype=np.uint8)
+    X_test = X_test.astype('float32')
+    X_test = X_test / 255
 
     labels = np.array(labels)
 

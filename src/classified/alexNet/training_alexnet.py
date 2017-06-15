@@ -1,3 +1,5 @@
+from time import sleep
+
 from CNN_layer_alexNet import *
 import dataset
 
@@ -8,7 +10,7 @@ num_channels = 3
 # image dimensions
 img_size = 128
 # class info
-classes = ['animals', 'people', 'cars']
+classes = ['animals', 'cars', 'people']
 num_classes = len(classes)
 #TODO repalce batch size.
 batch_size = 16
@@ -17,14 +19,14 @@ validation_size = .2
 # how long to wait after validation loss stops improving before terminating training
 early_stopping = None  # use None if you don't want to implement early stoping
 #files path
-train_path='training_data'
-test_path='testing_data'
+train_path='../../../data/training_data'
+#test_path='../testing_data'
 
 
 #-------------------read and create dataset-----------------
 #read
 data = dataset.read_train_sets(train_path, img_size, classes, validation_size=validation_size)
-test_images, test_ids = dataset.read_test_set(test_path, img_size,classes)
+#test_images, test_ids = dataset.read_test_set(test_path, img_size,classes)
 
 # Size of image when flattened to a single dimension
 img_size_flat = img_size * img_size * num_channels
@@ -137,7 +139,6 @@ layer_fc2 = new_fc_layer(input=layer_fc1,
                          num_outputs=fc_size2,
                          use_relu=True)
 # fully conectted 1
-num_classes = 3
 layer_fc3 = new_fc_layer(input=layer_fc2,
                          num_inputs=fc_size2,
                          num_outputs=num_classes,
@@ -157,10 +158,13 @@ cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits=layer_fc3, labels
 cost = tf.reduce_mean(cross_entropy)
 
 # optimizer gradient descent optimizier
-optimizer = tf.train.GradientDescentOptimizer(0.01).minimize(cost)
+# AdamOptimizer(learning_rate=1e-4)
+optimizer = tf.train.AdamOptimizer(learning_rate=1e-4).minimize(cost)
+
+# optimizer = tf.train.GradientDescentOptimizer(0.001).minimize(cost)
 # for print accuracy
 correct_prediction = tf.equal(y_pred_cls, y_true_cls)
-accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32),name='accuracy')
 
 session.run(tf.global_variables_initializer())
 train_batch_size = batch_size
@@ -173,22 +177,23 @@ def print_progress(epoch, feed_dict_train, feed_dict_validate, val_loss):
     msg = "Epoch {0} --- Training Accuracy: {1:>6.1%}, Validation Accuracy: {2:>6.1%}, Validation Loss: {3:.3f}"
     print(msg.format(epoch + 1, acc, val_acc, val_loss))
 
-def saveSession(sess):
-    saver = tf.train.Saver()
-    # saver.save(sess, 'model/alexNet_model', global_step=1000)
-    saver.save(sess, 'model_files/alexNet_model')
+def saveSession(sess, i):
+    #saver.save(sess, 'model_files/alexNet_model', global_step=3)
+    name = "model_files/alexNet_model"+str(i)
+    saver.save(sess, name)
 
+saver = tf.train.Saver()
 total_iterations = 0
 
 def optimize(num_iterations):
     global total_iterations
-    num_iterations_for_saving = 0
+    num_iterations_for_saving = 1
     best_val_loss = float("inf")
     patience = 0
-
+    print  "data.train.num_examples = {}".format(data.train.num_examples)
     for i in range(total_iterations,
                    total_iterations + num_iterations):
-
+        print i
         x_batch, y_true_batch, _, cls_batch = data.train.next_batch(train_batch_size)
 
         x_valid_batch, y_valid_batch, _, valid_cls_batch = data.valid.next_batch(train_batch_size)
@@ -202,23 +207,23 @@ def optimize(num_iterations):
                               y_true: y_valid_batch}
 
         session.run(optimizer, feed_dict=feed_dict_train)
-
-        if i % int(data.train.num_examples / batch_size) == 0:
+        # msgcost = "cost = {}"
+        # print msgcost.format(session.run(cost, feed_dict=feed_dict_validate))
+        # if i % int(data.train.num_examples / batch_size) == 0:
+        if i % int(10) == 0:
             val_loss = session.run(cost, feed_dict=feed_dict_validate)
-            epoch = int(i / int(data.train.num_examples / batch_size))
-
+            #epoch = int(i / int(data.train.num_examples / batch_size))
+            epoch = int(i / 10)
             print_progress(epoch, feed_dict_train, feed_dict_validate, val_loss)
             print "num_iterations_for_saving = {}".format(num_iterations_for_saving)
-            num_iterations_for_saving = 1 + num_iterations_for_saving
-            if num_iterations_for_saving == 6:
+
+            if num_iterations_for_saving == 3:
                 num_iterations_for_saving = 0
-                saveSession(session)
+                print"saveSession"
+                saveSession(session,i)
+            num_iterations_for_saving = 1 + num_iterations_for_saving
 
     total_iterations += num_iterations
-
-optimize(num_iterations=3000)
-
-
 
 def printShapeOfLayers():
     print "x: {x}".format(x = session.run(tf.shape(x)))
@@ -239,4 +244,12 @@ def printShapeOfLayers():
     print "layer_fc3: {layer_fc3}".format(layer_fc3 = session.run(tf.shape(layer_fc3)))
     print "y_pred: {y_pred}".format(y_pred = session.run(tf.shape(y_pred)))
     print "y_pred_cls: {y_pred_cls}".format(y_pred_cls = session.run(tf.shape(y_pred_cls)))
+
+
+
+optimize(num_iterations=6000)
+
+
+
+
 

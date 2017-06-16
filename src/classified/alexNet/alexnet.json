@@ -1,0 +1,107 @@
+{
+  "layers":[
+    {
+      "name":"conv1",
+      "type": 0,
+      "structure":{
+        "num_filters": 96,
+        "num_input_channels": 3,
+        "conv_filter_size": 12,
+        "conv_stride_size": 2,
+        "pooling_filter_size": 7,
+        "pooling_strides_size": 2,
+        "padding_filter_size": 2,
+        "padding_strides_size": 0,
+        "use_pooling": true
+      }
+    },
+    {
+      "name":"conv2",
+      "type": 1,
+      "structure": {
+        "num_filters": 256,
+        "num_input_channels": 96,
+        "conv_filter_size": 5,
+        "conv_stride_size": 1,
+        "pooling_filter_size": 3,
+        "pooling_strides_size": 2,
+        "padding_filter_size": 1,
+        "padding_strides_size": 0,
+        "use_pooling": true
+      }
+    },
+    {
+      "name":"conv3",
+      "type": 1,
+      "structure": {
+        "num_filters": 384,
+        "num_input_channels": 256,
+        "conv_filter_size": 3,
+        "conv_stride_size": 1,
+        "pooling_filter_size": 0,
+        "pooling_strides_size": 0,
+        "padding_filter_size": 1,
+        "padding_strides_size": 0,
+        "use_pooling": false
+      }
+    },
+    {
+      "name":"conv4",
+      "type": 1,
+      "structure": {
+        "num_filters": 384,
+        "num_input_channels": 384,
+        "conv_filter_size": 3,
+        "conv_stride_size": 1,
+        "pooling_filter_size": 0,
+        "pooling_strides_size": 0,
+        "padding_filter_size": 1,
+        "padding_strides_size": 0,
+        "use_pooling": false
+      }
+    },
+    {
+      "name":"conv5",
+      "type": 1,
+      "structure":{
+        "num_filters": 256,
+        "num_input_channels": 384,
+        "conv_filter_size": 3,
+        "conv_stride_size": 1,
+        "pooling_filter_size": 3,
+        "pooling_strides_size": 2,
+        "padding_filter_size": 1,
+        "padding_strides_size": 0,
+        "use_pooling": true
+      }
+    },
+    {
+      "name": "flatten",
+      "type": 2
+    },
+    {
+      "name": "fc1",
+      "type": 3,
+      "structure":{
+        "num_outputs":4096,
+        "use_relu":true
+      }
+    },
+    {
+      "name": "fc2",
+      "type": 3,
+      "structure":{
+        "num_outputs":4096,
+        "use_relu":true
+      }
+    },
+    {
+      "name": "fc3",
+      "type": 4,
+      "structure":{
+        "use_relu":false
+      }
+    }
+  ]
+}
+

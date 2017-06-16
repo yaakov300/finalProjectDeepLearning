@@ -1,3 +1,4 @@
+import cv2
 import tensorflow as tf
 import dataset
 import numpy as np
@@ -46,16 +47,21 @@ def getActivations(layer,dict):
 
 def plotNNFilter(units):
     filters = units.shape[3]
-    plt.figure(1, figsize=(20,20))
-    n_columns = 6
+    plt.figure(3, figsize=(20,20))
+    n_columns = 100
     n_rows = math.ceil(filters / n_columns) + 1
     # for i in range(filters):
     #     plt.subplot(n_rows, n_columns, i+1)
     #     plt.title('Filter ' + str(i))
     #     plt.imshow(units[0,:,:,i], interpolation="nearest", cmap="gray")
-    plt.subplot(n_rows, n_columns,1)
+    #plt.s(n_rows, n_columns,1)
     plt.title('Filter ' + str(1))
-    plt.imshow(units[0, :, :, 1], interpolation="nearest", cmap="gray")
+    print "len image before resize = {}".format(len(units[0, :, :, 1]))
+    image = cv2.resize(units[0, :, :, 1], (200, 200), 0, 0, cv2.INTER_LINEAR)
+    print "len image before resize= {}".format(len(image))
+
+    #plt.imshow(image)
+    plt.imshow(image)#, interpolation="nearest", cmap="gray")
     plt.show()
     print "finish"
 

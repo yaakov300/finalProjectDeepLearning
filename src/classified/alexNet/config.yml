@@ -4,8 +4,8 @@ training:
   # image dimensions
   img_size : 128
   # class info
-  classes : ['test']
-  #classes : ['animals', 'people', 'cars']
+  #classes : ['test']
+  classes : ['animals', 'people', 'cars']
   #TODO repalce batch size.
   batch_size : 16
   # validation split
@@ -21,3 +21,7 @@ training:
 tensor_name:
   input_x: 'x'
   input_y_true: 'y_true'
+
+visualizing:
+    folder: ['visual']
+    path: 'test_data'

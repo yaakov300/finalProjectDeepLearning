@@ -18,4 +18,6 @@ training:
   testeing_path: 'test_data'
   training_path: '../../../data/training_data'
 
-
+tensor_name:
+  input_x: 'x'
+  input_y_true: 'y_true'

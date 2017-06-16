@@ -3,21 +3,24 @@ import dataset
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import yaml
+
+#load config
+config = yaml.safe_load(open("config.yml"))
 
 #create graph
 sess = tf.Session()
-saver = tf.train.import_meta_graph('model_files/alexNet_model1370.meta')
-saver.restore(sess, tf.train.latest_checkpoint('model_files/./'))
+saver = tf.train.import_meta_graph(config['training']['model_path']+config['training']['model_name'])
+saver.restore(sess, tf.train.latest_checkpoint(config['training']['model_path']+'./'))
 graph = tf.get_default_graph()
 
 #read image for test
 y_pred = graph.get_tensor_by_name("y_pred:0")
-#test_path='../testing_temp'
-test_path='test_data'
+test_path = config['training']['testeing_path']
 img_size = 128
-classes = ['animals', 'cars', 'people']
+classes = config['training']['classes']
 num_classes = len(classes)
-num_channels = 3
+num_channels = config['training']['classes']
 img_size_flat = img_size * img_size * num_channels
 test_images, test_ids, test_label = dataset.read_test_set(test_path, img_size,classes)
 num_images = len(test_images)
@@ -58,7 +61,13 @@ def plotNNFilter(units):
     print "finish"
 
 #visualitzing()
-test()
+
+def main ():
+    test()
+
+
+if __name__ == "__main__":
+    main()
 
 # for i in node:
 #     print i.name

@@ -2,24 +2,27 @@ from time import sleep
 
 from CNN_layer_alexNet import *
 import dataset
+import yaml
 
 #-------------------Define arguments-----------------
 
+#load config
+config = yaml.safe_load(open("config.yml"))
 # Number of color channels for the images: 1 channel for gray-scale.
-num_channels = 3
+num_channels = config['training']['num_channels']
 # image dimensions
-img_size = 128
+img_size = config['training']['img_size']
 # class info
-classes = ['animals', 'cars', 'people']
+classes = config['training']['classes']
 num_classes = len(classes)
 #TODO repalce batch size.
-batch_size = 16
+batch_size = config['training']['batch_size']
 # validation split
-validation_size = .2
+validation_size = config['training']['validation_size']
 # how long to wait after validation loss stops improving before terminating training
 early_stopping = None  # use None if you don't want to implement early stoping
 #files path
-train_path='../../../data/training_data'
+train_path=config['training']['training_path']
 #test_path='../testing_data'
 
 

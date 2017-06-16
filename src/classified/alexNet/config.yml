@@ -1,0 +1,20 @@
+training:
+  #image channels
+  num_channels : 3
+  # image dimensions
+  img_size : 128
+  # class info
+  classes : ['animals', 'people', 'cars']
+  #TODO repalce batch size.
+  batch_size : 16
+  # validation split
+  validation_size : .2
+
+  #model files
+  model_path: 'model_files/'
+  model_name: 'alexNet_model1370.meta'
+
+  testeing_path: 'test_data'
+  training_path: '../../../data/training_data'
+
+

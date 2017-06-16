@@ -1,0 +1,8 @@
+app:
+  mode: DEBUG
+  root: /Users/shimondavino/PycharmProjects/finalProjectDeepLearningNew
+
+data:
+  path:
+    train: /data/training_data
+    test: /data/testing_data

@@ -37,16 +37,33 @@ y_test_images = np.zeros((len(test_images), 3))
 feed_dict_testing = {x: x_batch, y_true: y_test_images}
 feed_dict_visual = {x: x_batch[0], y_true: y_test_images[0]}
 
-def test():
-  pred = sess.run(y_pred, feed_dict=feed_dict_testing)
-  msg = "animals = {0:6.5%}, cars = {1:6.5%}, people = {2:6.5%}"
-  for i in range(num_images):
-        print msg.format(pred[i][0],pred[i][1],pred[i][2])
+def visualitzing():
+    getActivations(graph.get_tensor_by_name("Conv2D:0"),feed_dict_testing)
+
+def getActivations(layer,dict):
+    units = sess.run(layer,feed_dict=dict)
+    plotNNFilter(units)
+
+def plotNNFilter(units):
+    filters = units.shape[3]
+    plt.figure(1, figsize=(20,20))
+    n_columns = 6
+    n_rows = math.ceil(filters / n_columns) + 1
+    # for i in range(filters):
+    #     plt.subplot(n_rows, n_columns, i+1)
+    #     plt.title('Filter ' + str(i))
+    #     plt.imshow(units[0,:,:,i], interpolation="nearest", cmap="gray")
+    plt.subplot(n_rows, n_columns,1)
+    plt.title('Filter ' + str(1))
+    plt.imshow(units[0, :, :, 1], interpolation="nearest", cmap="gray")
+    plt.show()
+    print "finish"
+
 
 
 def main ():
-    test()
-
+    visualitzing()
 
 if __name__ == "__main__":
     main()
+

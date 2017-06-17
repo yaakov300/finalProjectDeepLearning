@@ -110,7 +110,13 @@
   ],
   "runnig_config":{
     "num_iterations": 6000,
-    "num_iterations_for_saving": 3
+    "num_iterations_for_saving": 3,
+    "validation_size": 0.2,
+    "early_stopping": null
+  },
+  "input":{
+    "img_size": 128
   }
+
 }
 

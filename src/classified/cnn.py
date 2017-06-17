@@ -4,48 +4,51 @@ import yaml
 import json
 import os
 
-base_dir = os.path.dirname(__file__)
+# region Define arguments
 
 layers = {}
 network = {}
 outpot_folder = None
 outpot_model = None
+base_dir = os.path.dirname(__file__)
 
-# open network json
-with open(os.path.join(base_dir, 'test.json')) as data_file:
+# open network config
+with open(os.path.join(base_dir, 'alexnet.json')) as data_file:
     network_config = json.load(data_file)
     data_file.close()
 
-# -------------------Define arguments-----------------
-
-# load config
+# load global config
 config = yaml.safe_load(open("config.yml"))
+
 # Number of color channels for the images: 1 channel for gray-scale.
 num_channels = config['training']['num_channels']
-# image dimensions
-img_size = config['training']['img_size']
 # class info
 classes = config['training']['classes']
 num_classes = len(classes)
-# TODO repalce batch size.
 batch_size = config['training']['batch_size']
-# validation split
-validation_size = config['training']['validation_size']
-# how long to wait after validation loss stops improving before terminating training
-early_stopping = None  # use None if you don't want to implement early stoping
 # files path
 train_path = config['training']['training_path']
-
 output_training_path = config['training']['output_training_path']
 
+# image dimensions
+img_size = network_config["input"]["img_size"]
+# validation split
+validation_size = network_config["runnig_config"]["validation_size"]
+# how long to wait after validation loss stops improving before terminating training
+early_stopping = network_config["runnig_config"][
+    "early_stopping"]  # use None if you don't want to implement early stoping
 # -------------------read and create dataset-----------------
 # read
 data = src.classified.alexNet.dataset.read_train_sets(train_path, img_size, classes, validation_size=validation_size)
 
 img_size_flat = img_size * img_size * num_channels
 x = tf.placeholder(tf.float32, shape=[None, img_size_flat], name=config["tensor_name"]["input_x"])
+y_true = tf.placeholder(tf.float32, shape=[None, num_classes], name=config["tensor_name"]["input_y_true"])
+
 total_iterations = 0
 
+
+# endregion
 
 # region network_layer
 # -------------------Network layer functions-----------------
@@ -123,13 +126,19 @@ def create_folder():
     outpot_model = os.path.join(outpot_folder, "model")
     if not os.path.exists(outpot_model):
         os.makedirs(outpot_model)
-
     outpot_model = os.path.join(outpot_model, "modle")
 
 
-# endregion
+def save_network_config_file():
+    file_config = os.path.join(outpot_folder, "config.json")
 
-# -------------------runnig the network-----------------
+
+def update_network_messege_file():
+
+
+#endregion
+
+# region training the network
 def run_network():
     create_folder()
     output_layer = layers[len(layers) - 1][1]
@@ -138,11 +147,11 @@ def run_network():
     y_pred_cls = tf.argmax(y_pred, dimension=1)
 
     # desirable outout
-    y_true = tf.placeholder(tf.float32, shape=[None, num_classes], name=config["tensor_name"]["input_y_true"])
     y_true_cls = tf.argmax(y_true, dimension=1)
 
     # -------------------train the network network-----------------
     session = tf.Session()
+
     # cost function
     cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits=output_layer, labels=y_true)
     cost = tf.reduce_mean(cross_entropy)
@@ -155,7 +164,8 @@ def run_network():
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32), name=config["tensor_name"]["accuracy"])
 
     session.run(tf.global_variables_initializer())
-    train_batch_size = batch_size
+
+    saver = tf.train.Saver()
 
     def print_progress(epoch, feed_dict_train, feed_dict_validate, val_loss):
         # Calculate the accuracy on the training-set.
@@ -165,28 +175,24 @@ def run_network():
 
         print(msg.format(epoch + 1, acc, val_acc, val_loss))
 
-    def saveSession(sess, i):
+    def save_session(sess, i):
         saver.save(sess, outpot_model)
-
-    saver = tf.train.Saver()
 
     def optimize(num_iterations):
         global total_iterations
+
         num_iterations_for_saving = 1
-        img_size_flat = img_size * img_size * num_channels
-        # input
 
-
-        print  "data.train.num_examples = {}".format(data.train.num_examples)
+        print "data.train.num_examples = {}".format(data.train.num_examples)
         for i in range(total_iterations,
                        total_iterations + num_iterations):
             print i
-            x_batch, y_true_batch, _, cls_batch = data.train.next_batch(train_batch_size)
+            x_batch, y_true_batch, _, cls_batch = data.train.next_batch(batch_size)
 
-            x_valid_batch, y_valid_batch, _, valid_cls_batch = data.valid.next_batch(train_batch_size)
+            x_valid_batch, y_valid_batch, _, valid_cls_batch = data.valid.next_batch(batch_size)
 
-            x_batch = x_batch.reshape(train_batch_size, img_size_flat)
-            x_valid_batch = x_valid_batch.reshape(train_batch_size, img_size_flat)
+            x_batch = x_batch.reshape(batch_size, img_size_flat)
+            x_valid_batch = x_valid_batch.reshape(batch_size, img_size_flat)
             feed_dict_train = {x: x_batch,
                                y_true: y_true_batch}
 
@@ -203,8 +209,8 @@ def run_network():
 
                 if num_iterations_for_saving == network_config["runnig_config"]["num_iterations_for_saving"]:
                     num_iterations_for_saving = 0
-                    print"saveSession"
-                    saveSession(session, i)
+                    print"save_session"
+                    save_session(session, i)
 
                 num_iterations_for_saving = 1 + num_iterations_for_saving
 
@@ -212,6 +218,8 @@ def run_network():
 
     optimize(num_iterations=network_config["runnig_config"]["num_iterations"])
 
+
+# endregion
 
 init_layers()
 run_network()

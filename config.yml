@@ -1,7 +1,7 @@
 app:
   mode: DEBUG
   root: /Users/shimondavino/PycharmProjects/finalProjectDeepLearningNew
-
+  deploy_path: 'devops/relese
 data:
   path:
     train: /data/training_data

@@ -7,5 +7,6 @@ network:
   number_of_fc_layer: 3
   number_of_iteration: 6000
   name_of_layer: ['conv1','conv2','conv3','conv4','conv5','flatten','fc1','fc2','fc3']
+  classes : ['animals', 'people', 'cars']
 
 

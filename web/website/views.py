@@ -15,11 +15,13 @@ count = global_var
 # Create your views here.
 class HomePageView(TemplateView):
     def get(self, request, **kwargs):
-
-        return render(request, 'index.html', context=None)
+        return render(request, 'deshboard.html', context=None)
 
 class ModelTrainingPageView(TemplateView):
     def get(self, request, **kwargs):
         tmp = {'person_name': global_var.incress_training()}
-
         return render(request, 'modelTraining.html', context=tmp)
+
+# class DeshboardPageView(TemplateView):
+#     def get(self, request, **kwargs):
+#         return render(request, 'deshboard.html', context=None)

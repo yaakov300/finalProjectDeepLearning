@@ -3,5 +3,18 @@
 {% block header %}Deshboard{% endblock %}
 
 {% block content %}
-<div>lorem ipsum</div>
+<div>
+    <div>
+        <h3></h3>
+        <div>
+            {% for net in networks %}
+                {% include "_networks.html" with network=net only %}
+            {% endfor %}
+        </div>
+    </div>
+    <div>
+        <h3></h3>
+        <div></div>
+    </div>
+</div>
 {% endblock %}

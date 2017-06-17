@@ -1,9 +1,11 @@
 {
+  "name":"alexNet",
   "layers":[
     {
-      "name":"conv1",
+
       "type": 0,
       "structure":{
+        "name":"conv1",
         "num_filters": 96,
         "num_input_channels": 3,
         "conv_filter_size": 12,
@@ -16,9 +18,9 @@
       }
     },
     {
-      "name":"conv2",
       "type": 1,
       "structure": {
+        "name":"conv2",
         "num_filters": 256,
         "num_input_channels": 96,
         "conv_filter_size": 5,
@@ -31,9 +33,9 @@
       }
     },
     {
-      "name":"conv3",
       "type": 1,
       "structure": {
+        "name":"conv3",
         "num_filters": 384,
         "num_input_channels": 256,
         "conv_filter_size": 3,
@@ -46,9 +48,9 @@
       }
     },
     {
-      "name":"conv4",
       "type": 1,
       "structure": {
+        "name":"conv4",
         "num_filters": 384,
         "num_input_channels": 384,
         "conv_filter_size": 3,
@@ -61,9 +63,9 @@
       }
     },
     {
-      "name":"conv5",
       "type": 1,
       "structure":{
+        "name":"conv5",
         "num_filters": 256,
         "num_input_channels": 384,
         "conv_filter_size": 3,
@@ -76,32 +78,39 @@
       }
     },
     {
-      "name": "flatten",
-      "type": 2
+
+      "type": 2,
+      "structure":{
+        "name": "flatten"
+      }
     },
     {
-      "name": "fc1",
       "type": 3,
       "structure":{
+        "name": "fc1",
         "num_outputs":4096,
         "use_relu":true
       }
     },
     {
-      "name": "fc2",
       "type": 3,
       "structure":{
+        "name": "fc2",
         "num_outputs":4096,
         "use_relu":true
       }
     },
     {
-      "name": "fc3",
       "type": 4,
       "structure":{
+        "name": "fc3",
         "use_relu":false
       }
     }
-  ]
+  ],
+  "runnig_config":{
+    "num_iterations": 6000,
+    "num_iterations_for_saving": 3
+  }
 }
 

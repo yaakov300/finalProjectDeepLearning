@@ -1,0 +1,29 @@
+training:
+  #image channels
+  num_channels : 3
+  # image dimensions
+  img_size : 128
+  # class info
+  #classes : ['test']
+  classes : ['animals', 'people', 'cars']
+  #TODO repalce batch size.
+  batch_size : 1
+  # validation split
+  validation_size : .2
+
+  #model files
+  model_path: 'model_files/'
+  model_name: 'alexNet_model1370.meta'
+
+  testeing_path: 'test_data'
+  training_path: '../../../data/training_data'
+
+tensor_name:
+  input_x: 'x'
+  input_y_true: 'y_true'
+  y_pred: 'y_pred'
+  accuracy: 'accuracy'
+
+visualizing:
+    folder: ['visual']
+    path: 'test_data'

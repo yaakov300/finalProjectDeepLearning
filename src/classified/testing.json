@@ -1,20 +1,8 @@
 {
   "model": {
-    "path": "model_files/",
+    "configPath": "alexNet/",
+    "path": "alexNet/model/",
     "name": "alexNet_model1370.meta"
   },
-  "data": {
-    "imgSize":128,
-    "numClasses" : 3
-  },
-  "layers": {
-    "Names": "Conv2D"
-  },
-  "filter": {
-    "indexFilter": 5,
-    "stepFilter": 4
-  },
-  "return":{
-    "steps":1
-  }
+  "testing": true
 }

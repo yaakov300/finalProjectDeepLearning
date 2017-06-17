@@ -20,9 +20,10 @@ tensor_name:
   accuracy: 'accuracy'
 
 visualizing:
-    folder: ['visual']
-    path: '../../data/test_data_web'
+  folder: ['visual']
+  path: '../../data/test_data_web'
 
 testing:
-    folder: ['test']
-    path: '../../data/test_data_web'
+  folder: ['test']
+  path_testing: '../../data/test_data'
+  path_using: '../../data/test_data_web'

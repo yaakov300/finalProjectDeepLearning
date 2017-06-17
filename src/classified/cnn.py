@@ -2,12 +2,23 @@ from CNN_layer import *
 import src.classified.alexNet.dataset
 import yaml
 import json
+import os
+
+base_dir = os.path.dirname(__file__)
 
 layers = {}
+network = {}
+outpot_folder = None
+outpot_model = None
 
-#-------------------Define arguments-----------------
+# open network json
+with open(os.path.join(base_dir, 'test.json')) as data_file:
+    network_config = json.load(data_file)
+    data_file.close()
 
-#load config
+# -------------------Define arguments-----------------
+
+# load config
 config = yaml.safe_load(open("config.yml"))
 # Number of color channels for the images: 1 channel for gray-scale.
 num_channels = config['training']['num_channels']
@@ -16,34 +27,37 @@ img_size = config['training']['img_size']
 # class info
 classes = config['training']['classes']
 num_classes = len(classes)
-#TODO repalce batch size.
+# TODO repalce batch size.
 batch_size = config['training']['batch_size']
 # validation split
 validation_size = config['training']['validation_size']
 # how long to wait after validation loss stops improving before terminating training
 early_stopping = None  # use None if you don't want to implement early stoping
-#files path
-train_path=config['training']['training_path']
+# files path
+train_path = config['training']['training_path']
 
-#-------------------read and create dataset-----------------
-#read
+output_training_path = config['training']['output_training_path']
+
+# -------------------read and create dataset-----------------
+# read
 data = src.classified.alexNet.dataset.read_train_sets(train_path, img_size, classes, validation_size=validation_size)
-total_iterations = 0
+
 img_size_flat = img_size * img_size * num_channels
 x = tf.placeholder(tf.float32, shape=[None, img_size_flat], name=config["tensor_name"]["input_x"])
-with open('alexnet.json') as data_file:
-    network = json.load(data_file)
+total_iterations = 0
 
 
+# region network_layer
+# -------------------Network layer functions-----------------
 def conv_layer(layer_parameters, prev_layer):
     layer, weights = new_conv_layer(input=prev_layer[1], filter_size=layer_parameters["conv_filter_size"],
-                                                stride_size=layer_parameters["conv_stride_size"],
-                                                num_filters=layer_parameters["num_filters"],
-                                                num_input_channels=layer_parameters["num_input_channels"],
-                                                layer_name=layer_parameters["name"],
-                                                use_pooling=layer_parameters["use_pooling"],
-                                                pooling_filter_size=layer_parameters["pooling_filter_size"],
-                                                pooling_strides_size=layer_parameters["pooling_strides_size"])
+                                    stride_size=layer_parameters["conv_stride_size"],
+                                    num_filters=layer_parameters["num_filters"],
+                                    num_input_channels=layer_parameters["num_input_channels"],
+                                    layer_name=layer_parameters["name"],
+                                    use_pooling=layer_parameters["use_pooling"],
+                                    pooling_filter_size=layer_parameters["pooling_filter_size"],
+                                    pooling_strides_size=layer_parameters["pooling_strides_size"])
     print "init conv\n"
     return [1, layer, weights]
 
@@ -57,17 +71,14 @@ def flatten_layer(layer_parameters, prev_layer):
 def fc_layer(layer_parameters, prev_layer):
     outputs = layer_parameters["num_outputs"] if prev_layer[3] == None else prev_layer[3]
     layer = new_fc_layer(input=prev_layer[1],
-                             num_inputs=prev_layer[2],
-                             num_outputs=outputs,
-                             use_relu=layer_parameters["use_relu"])
+                         num_inputs=prev_layer[2],
+                         num_outputs=outputs,
+                         use_relu=layer_parameters["use_relu"])
     print "init fc layer\n"
     return [3, layer, outputs, None]
 
 
 def first_layer(layer_parameters, prev_layer):
-    # Size of image when flattened to a single dimension
-    img_size_flat = img_size * img_size * num_channels
-
     # input
     x_image = tf.reshape(x, [-1, img_size, img_size, num_channels])
 
@@ -76,7 +87,6 @@ def first_layer(layer_parameters, prev_layer):
 
 
 def last_layer(layer_parameters, prev_layer):
-
     print "init last fc layer\n"
     return fc_layer(layer_parameters, [3, prev_layer[1], prev_layer[2], num_classes])
 
@@ -90,7 +100,7 @@ def init_layers():
               }
     count_layers = 0
     prev_layer = None
-    for l in network["layers"]:
+    for l in network_config["layers"]:
         prev_layer = option[l["type"]](l["structure"], prev_layer)
         layers[count_layers] = prev_layer
         count_layers += 1
@@ -98,8 +108,31 @@ def init_layers():
     print "finish\n"
 
 
+# endregion
+
+# region save network
+def create_folder():
+    global outpot_folder
+    outpot_folder = config["training"]["output_training_path"]
+    if not os.path.exists(outpot_folder):
+        os.makedirs(outpot_folder)
+    outpot_folder = os.path.join(outpot_folder, network_config["name"])
+    if not os.path.exists(outpot_folder):
+        os.makedirs(outpot_folder)
+    global outpot_model
+    outpot_model = os.path.join(outpot_folder, "model")
+    if not os.path.exists(outpot_model):
+        os.makedirs(outpot_model)
+
+    outpot_model = os.path.join(outpot_model, "modle")
+
+
+# endregion
+
+# -------------------runnig the network-----------------
 def run_network():
-    output_layer = layers[len(layers)-1][1]
+    create_folder()
+    output_layer = layers[len(layers) - 1][1]
 
     y_pred = tf.nn.softmax(output_layer, name=config["tensor_name"]["y_pred"])
     y_pred_cls = tf.argmax(y_pred, dimension=1)
@@ -108,7 +141,7 @@ def run_network():
     y_true = tf.placeholder(tf.float32, shape=[None, num_classes], name=config["tensor_name"]["input_y_true"])
     y_true_cls = tf.argmax(y_true, dimension=1)
 
-    #-------------------train the network network-----------------
+    # -------------------train the network network-----------------
     session = tf.Session()
     # cost function
     cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits=output_layer, labels=y_true)
@@ -129,14 +162,13 @@ def run_network():
         acc = session.run(accuracy, feed_dict=feed_dict_train)
         val_acc = session.run(accuracy, feed_dict=feed_dict_validate)
         msg = "Epoch {0} --- Training Accuracy: {1:>6.1%}, Validation Accuracy: {2:>6.1%}, Validation Loss: {3:.3f}"
+
         print(msg.format(epoch + 1, acc, val_acc, val_loss))
 
     def saveSession(sess, i):
-        name = config["training"]["model_path"]+network["name"]
-        saver.save(sess, name)
+        saver.save(sess, outpot_model)
 
     saver = tf.train.Saver()
-
 
     def optimize(num_iterations):
         global total_iterations
@@ -169,15 +201,17 @@ def run_network():
                 print_progress(epoch, feed_dict_train, feed_dict_validate, val_loss)
                 print "num_iterations_for_saving = {}".format(num_iterations_for_saving)
 
-                if num_iterations_for_saving == network["runnig_config"]["num_iterations_for_saving"]:
+                if num_iterations_for_saving == network_config["runnig_config"]["num_iterations_for_saving"]:
                     num_iterations_for_saving = 0
                     print"saveSession"
                     saveSession(session, i)
+
                 num_iterations_for_saving = 1 + num_iterations_for_saving
 
         total_iterations += num_iterations
 
-    optimize(num_iterations=network["runnig_config"]["num_iterations"])
+    optimize(num_iterations=network_config["runnig_config"]["num_iterations"])
+
 
 init_layers()
 run_network()

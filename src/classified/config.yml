@@ -16,7 +16,9 @@ training:
   model_name: 'alexNet_model1370.meta'
 
   testeing_path: 'test_data'
-  training_path: '../../../data/training_data'
+  training_path: '../../data/training_data'
+
+  output_training_path: '../../output/'
 
 tensor_name:
   input_x: 'x'

@@ -22,10 +22,10 @@ class HomePageView(TemplateView):
         context_dict = {'networks': [networks,networks]}
         return render(request, 'deshboard.html', context_dict)
 
-class ModelTrainingPageView(TemplateView):
+class ApplayPageView(TemplateView):
     def get(self, request, **kwargs):
-        tmp = {'person_name': global_var.incress_training()}
-        return render(request, 'modelTraining.html', context=tmp)
+        return render(request, 'apply.html', context=None)
+
 
 # class DeshboardPageView(TemplateView):
 #     def get(self, request, **kwargs):

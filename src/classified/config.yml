@@ -1,9 +1,6 @@
 training:
   #image channels
   num_channels : 3
-  # class info
-  #classes : ['test']
-  classes : ['animals', 'people', 'cars']
   #TODO repalce batch size.
   batch_size : 1
 

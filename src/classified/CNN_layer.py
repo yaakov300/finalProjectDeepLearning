@@ -1,8 +1,9 @@
 import tensorflow as tf
 
 
-def new_conv_layer(input, filter_size, stride_size ,num_filters, num_input_channels,
-                   layer_name,use_pooling=True, pooling_filter_size= "NONE", pooling_strides_size= "NONE"):
+def new_conv_layer(input, filter_size, stride_size, num_filters, num_input_channels,
+                   layer_name, use_pooling=True, pooling_filter_size="NONE", pooling_strides_size="NONE",
+                   padding_filter_size=None, padding_strides_size=None):
     shape = [filter_size, filter_size, num_input_channels, num_filters]
     weights = new_weights(shape=shape)
     biases = new_biases(length=num_filters)
@@ -20,14 +21,15 @@ def new_conv_layer(input, filter_size, stride_size ,num_filters, num_input_chann
                                ksize=[1, pooling_filter_size, pooling_filter_size, 1],
                                strides=[1, pooling_strides_size, pooling_strides_size, 1],
                                padding='VALID',
-                               name= layer_name+"_pool")
+                               name=layer_name + "_pool")
 
-    if (pooling_filter_size != None and pooling_strides_size != None):
-        tf.pad(layer,[[pooling_strides_size,pooling_strides_size],[pooling_filter_size,pooling_filter_size],
-                      [pooling_filter_size,pooling_filter_size],[pooling_strides_size,pooling_strides_size]],"CONSTANT")
+    if (padding_filter_size != None and padding_strides_size != None):
+        tf.pad(layer, [[padding_strides_size, padding_strides_size], [padding_filter_size, padding_filter_size],
+                       [padding_filter_size, padding_filter_size], [padding_strides_size, padding_strides_size]],
+               "CONSTANT")
 
     layer = tf.nn.relu(layer)
-    return layer,weights
+    return layer, weights
 
 
 def new_flatten_layer(layer):
@@ -53,7 +55,8 @@ def new_fc_layer(input,
 
 
 def new_weights(shape):
-    return tf.Variable(tf.truncated_normal(shape, stddev=0.05)) # stddev -> The standard deviation
+    return tf.Variable(tf.truncated_normal(shape, stddev=0.05))  # stddev -> The standard deviation
+
 
 def new_biases(length):
     return tf.Variable(tf.constant(0.05, shape=[length]))

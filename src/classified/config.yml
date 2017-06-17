@@ -24,4 +24,8 @@ tensor_name:
 
 visualizing:
     folder: ['visual']
-    path: 'test_data'
+    path: '../../data/test_data_web'
+
+testing:
+    folder: ['test']
+    path: '../../data/test_data_web'

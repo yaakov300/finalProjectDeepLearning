@@ -1,3 +1,4 @@
+import json
 import tensorflow as tf
 import dataset
 import numpy as np
@@ -5,23 +6,33 @@ import matplotlib.pyplot as plt
 import math
 import yaml
 
-#load config
-config = yaml.safe_load(open("config.yml"))
+with open('visualising.json') as data_file:
+    network = json.load(data_file)
+    data_file.close()
 
-#create graph
+# load config
+config = yaml.safe_load(open("config.yml"))
+modelConfig = yaml.safe_load(open(config['training']['output_training_path']+network['model']['configPath']+"config.yml"))
+
+# create graph
 sess = tf.Session()
-saver = tf.train.import_meta_graph(config['training']['model_path']+config['training']['model_name'])
-saver.restore(sess, tf.train.latest_checkpoint(config['training']['model_path']+'./'))
+saver = tf.train.import_meta_graph(config['training']['output_training_path']+network['model']['path']+network['model']['name'])
+saver.restore(sess, tf.train.latest_checkpoint(config['training']['output_training_path']+network['model']['path']+'./'))
 graph = tf.get_default_graph()
 
-#read image for test
+# read image for test
 y_pred = graph.get_tensor_by_name("y_pred:0")
-test_path = config['training']['testeing_path']
-img_size = 128
+
+
+test_path = config['testing']['path']#constant value
+num_channels = config['training']['num_channels'] #constant value
+img_size = modelConfig['network']['img_size']
+
 classes = config['training']['classes']
 num_classes = len(classes)
-num_channels = config['training']['num_channels']
+
 img_size_flat = img_size * img_size * num_channels
+
 test_images, test_ids, test_label = dataset.read_test_set(test_path, img_size,classes)
 num_images = len(test_images)
 print "len = {}".format(len(test_images))

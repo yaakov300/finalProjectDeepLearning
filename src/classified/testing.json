@@ -1,6 +1,7 @@
 {
   "model": {
-    "path": "model_files/",
+    "configPath": "alexNet/",
+    "path": "alexNet/model/",
     "name": "alexNet_model1370.meta"
   },
   "data": {

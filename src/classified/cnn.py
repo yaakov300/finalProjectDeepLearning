@@ -1,8 +1,10 @@
-from CNN_layer import *
-import src.classified.alexNet.dataset
-import yaml
 import json
 import os
+
+import yaml
+
+import src.classified.dataset
+from CNN_layer import *
 
 # region Define arguments
 
@@ -39,7 +41,7 @@ early_stopping = network_config["runnig_config"][
     "early_stopping"]  # use None if you don't want to implement early stoping
 # -------------------read and create dataset-----------------
 # read
-data = src.classified.alexNet.dataset.read_train_sets(train_path, img_size, classes, validation_size=validation_size)
+data = src.classified.dataset.read_train_sets(train_path, img_size, classes, validation_size=validation_size)
 
 img_size_flat = img_size * img_size * num_channels
 x = tf.placeholder(tf.float32, shape=[None, img_size_flat], name=config["tensor_name"]["input_x"])
@@ -136,7 +138,7 @@ def save_network_config_file():
 def update_network_messege_file():
 
 
-#endregion
+# endregion
 
 # region training the network
 def run_network():

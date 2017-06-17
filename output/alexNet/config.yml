@@ -1,0 +1,7 @@
+network:
+  name: "alexNet"
+  img_size: 128
+  number_of_conv_layer: 5
+  number_of_flatten_layer: 1
+  number_of_fc_layer: 3
+

@@ -62,6 +62,7 @@ y_true = tf.placeholder(tf.float32, shape=[None, num_classes], name=config["tens
 status_progress["status"] = {"last_modified": strftime("%Y-%m-%d %H:%M:%S", gmtime()), "num_of_complete_iterations": 0,
                              "state": status[0]}
 
+#endregion
 
 # region network_layer
 # -------------------Network layer functions-----------------

@@ -1,7 +1,11 @@
 network:
   name: "alexNet"
+  num_examples: 50
   img_size: 128
   number_of_conv_layer: 5
   number_of_flatten_layer: 1
   number_of_fc_layer: 3
+  number_of_iteration: 6000
+  name_of_layer: ['conv1','conv2','conv3','conv4','conv5','flatten','fc1','fc2','fc3']
+
 

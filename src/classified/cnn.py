@@ -1,17 +1,28 @@
 import json
 import os
-
+import cPickle as pickle
 import yaml
-
+from time import gmtime, strftime
 import src.classified.dataset
 from CNN_layer import *
 
 # region Define arguments
 
 layers = {}
-network = {}
+status_progress = {"status": None,
+                   "log": []}
+progress = []
+
+status = {0: "loading",
+          1: "training",
+          2: "complete"}
+
+layers_name = []
 outpot_folder = None
 outpot_model = None
+count_conv_layer = 0
+count_flatten_layer = 0
+count_fc_layer = 0
 base_dir = os.path.dirname(__file__)
 
 # open network config
@@ -20,13 +31,11 @@ with open(os.path.join(base_dir, 'alexnet.json')) as data_file:
     data_file.close()
 
 # load global config
-config = yaml.safe_load(open("config.yml"))
+with open("config.yml", 'r') as stream:
+    config = yaml.load(stream)
 
 # Number of color channels for the images: 1 channel for gray-scale.
 num_channels = config['training']['num_channels']
-# class info
-classes = config['training']['classes']
-num_classes = len(classes)
 batch_size = config['training']['batch_size']
 # files path
 train_path = config['training']['training_path']
@@ -39,6 +48,10 @@ validation_size = network_config["runnig_config"]["validation_size"]
 # how long to wait after validation loss stops improving before terminating training
 early_stopping = network_config["runnig_config"][
     "early_stopping"]  # use None if you don't want to implement early stoping
+total_iterations = network_config["runnig_config"]["num_iterations"]
+# class info
+classes = network_config['input']['classes']
+num_classes = len(classes)
 # -------------------read and create dataset-----------------
 # read
 data = src.classified.dataset.read_train_sets(train_path, img_size, classes, validation_size=validation_size)
@@ -46,11 +59,10 @@ data = src.classified.dataset.read_train_sets(train_path, img_size, classes, val
 img_size_flat = img_size * img_size * num_channels
 x = tf.placeholder(tf.float32, shape=[None, img_size_flat], name=config["tensor_name"]["input_x"])
 y_true = tf.placeholder(tf.float32, shape=[None, num_classes], name=config["tensor_name"]["input_y_true"])
+status_progress["status"] = {"last_modified": strftime("%Y-%m-%d %H:%M:%S", gmtime()), "num_of_complete_iterations": 0,
+                             "state": status[0]}
 
-total_iterations = 0
-
-
-# endregion
+#endregion
 
 # region network_layer
 # -------------------Network layer functions-----------------
@@ -62,13 +74,19 @@ def conv_layer(layer_parameters, prev_layer):
                                     layer_name=layer_parameters["name"],
                                     use_pooling=layer_parameters["use_pooling"],
                                     pooling_filter_size=layer_parameters["pooling_filter_size"],
-                                    pooling_strides_size=layer_parameters["pooling_strides_size"])
+                                    pooling_strides_size=layer_parameters["pooling_strides_size"],
+                                    padding_filter_size=layer_parameters["padding_filter_size"],
+                                    padding_strides_size=layer_parameters["padding_strides_size"])
+    global count_conv_layer
+    count_conv_layer += 1
     print "init conv\n"
     return [1, layer, weights]
 
 
 def flatten_layer(layer_parameters, prev_layer):
     layer, num_features = new_flatten_layer(prev_layer[1])
+    global count_flatten_layer
+    count_flatten_layer += 1
     print "init flatten layer\n"
     return [2, layer, num_features, None]
 
@@ -80,6 +98,8 @@ def fc_layer(layer_parameters, prev_layer):
                          num_outputs=outputs,
                          use_relu=layer_parameters["use_relu"])
     print "init fc layer\n"
+    global count_fc_layer
+    count_fc_layer += 1
     return [3, layer, outputs, None]
 
 
@@ -108,6 +128,7 @@ def init_layers():
     for l in network_config["layers"]:
         prev_layer = option[l["type"]](l["structure"], prev_layer)
         layers[count_layers] = prev_layer
+        layers_name.append(l["structure"]["name"])
         count_layers += 1
         print count_layers
     print "finish\n"
@@ -132,17 +153,33 @@ def create_folder():
 
 
 def save_network_config_file():
-    file_config = os.path.join(outpot_folder, "config.json")
+    file_config = os.path.join(outpot_folder, "config.yml")
+    file_data = dict(network=dict(
+        name=network_config["name"],
+        num_examples=data.train.num_examples,
+        img_size=img_size,
+        number_of_conv_layer=count_conv_layer,
+        number_of_flatten_layer=count_fc_layer,
+        number_of_fc_layer=count_flatten_layer,
+        number_of_iteration=total_iterations,
+        name_of_layer=layers_name,
+        classes=classes
+    ))
+    with open(file_config, 'w') as outfile:
+        yaml.dump(file_data, outfile, default_flow_style=False)
+        outfile.close()
 
 
-def update_network_messege_file():
+def update_network_progress_file():
+    file_progress = os.path.join(outpot_folder, "progress.p")
+    with open(file_progress, 'wb') as fp:
+        pickle.dump(status_progress, fp)
 
 
 # endregion
 
 # region training the network
 def run_network():
-    create_folder()
     output_layer = layers[len(layers) - 1][1]
 
     y_pred = tf.nn.softmax(output_layer, name=config["tensor_name"]["y_pred"])
@@ -169,25 +206,28 @@ def run_network():
 
     saver = tf.train.Saver()
 
-    def print_progress(epoch, feed_dict_train, feed_dict_validate, val_loss):
+    def save_progress(epoch, feed_dict_train, feed_dict_validate, val_loss):
         # Calculate the accuracy on the training-set.
         acc = session.run(accuracy, feed_dict=feed_dict_train)
         val_acc = session.run(accuracy, feed_dict=feed_dict_validate)
-        msg = "Epoch {0} --- Training Accuracy: {1:>6.1%}, Validation Accuracy: {2:>6.1%}, Validation Loss: {3:.3f}"
+        # msg = "Epoch {0} --- Training Accuracy: {1:>6.1%}, Validation Accuracy: {2:>6.1%}, Validation Loss: {3:.3f}"
 
-        print(msg.format(epoch + 1, acc, val_acc, val_loss))
+        # print(msg.format(epoch + 1, acc, val_acc, val_loss))
+        status_progress["log"].append(
+            {"training_accuracy": acc, "validation_accuracy": val_acc, "validation_loss": val_loss})
 
-    def save_session(sess, i):
+    def save_session(sess, complete_iterations):
         saver.save(sess, outpot_model)
+        status_progress["status"]["last_modified"] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+        status_progress["status"]["num_of_complete_iterations"] = complete_iterations
+        status_progress["status"]["state"] = status[1] if complete_iterations < total_iterations else status[2]
+        update_network_progress_file()
 
     def optimize(num_iterations):
-        global total_iterations
-
         num_iterations_for_saving = 1
 
-        print "data.train.num_examples = {}".format(data.train.num_examples)
-        for i in range(total_iterations,
-                       total_iterations + num_iterations):
+        # print "data.train.num_examples = {}".format(data.train.num_examples)
+        for i in range(num_iterations):
             print i
             x_batch, y_true_batch, _, cls_batch = data.train.next_batch(batch_size)
 
@@ -206,17 +246,15 @@ def run_network():
             if i % int(10) == 0:
                 val_loss = session.run(cost, feed_dict=feed_dict_validate)
                 epoch = int(i / 10)
-                print_progress(epoch, feed_dict_train, feed_dict_validate, val_loss)
-                print "num_iterations_for_saving = {}".format(num_iterations_for_saving)
+                save_progress(epoch, feed_dict_train, feed_dict_validate, val_loss)
+                # print "num_iterations_for_saving = {}".format(num_iterations_for_saving)
 
                 if num_iterations_for_saving == network_config["runnig_config"]["num_iterations_for_saving"]:
                     num_iterations_for_saving = 0
-                    print"save_session"
+                    # print"save_session"
                     save_session(session, i)
-
                 num_iterations_for_saving = 1 + num_iterations_for_saving
-
-        total_iterations += num_iterations
+        save_session(session, total_iterations)
 
     optimize(num_iterations=network_config["runnig_config"]["num_iterations"])
 
@@ -224,4 +262,7 @@ def run_network():
 # endregion
 
 init_layers()
+create_folder()
+save_network_config_file()
+update_network_progress_file()
 run_network()

@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from model.networks import Network
-
+from model.classes import Classes
 import global_var
 
 count = global_var
@@ -23,7 +23,8 @@ class HomePageView(TemplateView):
 
 class ApplayPageView(TemplateView):
     def get(self, request, **kwargs):
-        context_dict ={'applyActive':'active'}
+        classe = Classes()
+        context_dict = {'classes': classe, 'applyActive':'active'}
         return render(request, 'apply.html', context_dict)
 
 class TrainingPageView(TemplateView):

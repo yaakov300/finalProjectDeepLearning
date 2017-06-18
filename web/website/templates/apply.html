@@ -3,18 +3,46 @@
 {% block header %}Apply{% endblock %}
 
 {% block content %}
-<div class="col-sm-12">
-    <div class="well">
-        <label class="control-label">Select File</label>
-        <input id="input-1" type="file" class="file">
+<div>
+    <div class="col-sm-5">
+        <form action="/action_page.php ">
+            <div class="form-group">
+                <div>
+                    <label class="control-label">Select File:</label>
+                    <input id="input-1" type="file" class="file">
+                </div>
+                <div>
+                    <select class="selectpicker">
+                        <option>alexNet</option>
+                        <option>imageNet</option>
+                        <option>runing</option>
+                    </select>
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </div>
+            </div>
+        </form>
+        <div>
+            <div class="well">
+                <ul>
+                    {% for key, value in classes.items %}
+                        <li>{{key}}: {{value}}</li>
+                    {% endfor %}
+
+                    <!--{% for net in networks %}-->
+                    <!--{% include "_networks.html" with network=net only %}-->
+                    <!--{% endfor %}-->
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-7">
+        <img src="https://www.vtdesignworks.com/uploads/blog/Google-Pelican.jpg"
+             class="img-responsive well" alt="Cinque Terre" width="304" height="236">
     </div>
 </div>
-<div class="col-sm-12">
-    <div class="well">
-        <label class="control-label">Select File</label>
-        <input id="input-1" type="file" class="file">
-    </div>
-</div>
+
 
 {% endblock %}
 

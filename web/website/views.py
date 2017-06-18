@@ -23,8 +23,9 @@ class HomePageView(TemplateView):
 
 class ApplayPageView(TemplateView):
     def get(self, request, **kwargs):
-        classe = Classes()
-        context_dict = {'classes': classe, 'applyActive':'active'}
+        classes = Classes().classes_name_pred
+        print classes
+        context_dict = {'classes': classes, 'applyActive':'active'}
         return render(request, 'apply.html', context_dict)
 
 class TrainingPageView(TemplateView):

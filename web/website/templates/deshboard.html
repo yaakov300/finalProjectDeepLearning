@@ -5,16 +5,15 @@
 {% block content %}
 <div>
     <div>
-        <h3></h3>
+        <h3>Available trained networks</h3>
+        {% for net in networks %}
         <div>
-            {% for net in networks %}
-                {% include "_networks.html" with network=net only %}
-            {% endfor %}
+            {% include "_networks.html" with network=net only %}
         </div>
-    </div>
-    <div>
-        <h3></h3>
-        <div></div>
+        <div id="testing results">
+            <span>{{net.testing}}</span>
+        </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

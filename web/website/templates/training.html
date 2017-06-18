@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block header %}Training new Network{% endblock %}
+
+{% block content %}
+<script src="/script/training.js"></scriptsrc>
+
+<div>
+    <div class="well">
+        <form id="trainNetwork" class="form" action="">
+            <label class="control-label">Upload network configuration</label>
+            <input id="input-1" type="file" class="file">
+            <button id="start">start training</button>
+        </form>
+    </div>
+    <div id="networkDetails">
+
+    </div>
+</div>
+
+
+{% endblock %}

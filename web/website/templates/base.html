@@ -23,6 +23,7 @@
       .row.content {height: auto;}
     }
 
+
         </style>
     </head>
 </head>
@@ -39,14 +40,19 @@
         <div class="col-sm-3 sidenav hidden-xs">
             <h2>Option</h2>
             <ul class="nav nav-pills nav-stacked">
-                <li class="active">
-                    <a href="/">Model structer</a>
+                <li class={{deshboardActive}}>
+                    <a href="/">Deshboard</a>
                 </li>
-                <li><a href="/modelTraining/">Model Training</a></li>
+                <li class="{{trainingActive}}">
+                    <a href="/train">Training</a>
+                </li>
+                <li class="{{applyActive}}">
+                    <a href="/apply">Aplly</a>
+                </li>
             </ul>
             <br>
         </div>
-        <div class="col-sm-9 well">
+        <div class="col-sm-9">
             <h2>{% block header %}{% endblock %}</h2>
             <div class="row">
                 {% block content %}{% endblock %}

@@ -1,4 +1,4 @@
-<div>
+<div class="well">
     <ul>
         <li>Name: {{network.name}}</li>
         <li>Status: {{network.status}}</li>
@@ -6,5 +6,9 @@
         <li>Training accuracy: {{network.training_accuracy}}</li>
         <li>Validation accuracy: {{network.validation_accuracy}}</li>
         <li>Validation loss: {{network.loss}}</li>
+
+        <li>
+            <button id="test_{{network.name}}">testing network</button>
+        </li>
     </ul>
 </div>

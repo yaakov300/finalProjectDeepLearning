@@ -17,14 +17,20 @@ count = global_var
 class HomePageView(TemplateView):
     def get(self, request, **kwargs):
         networks = Network()
-
         print networks.name
-        context_dict = {'networks': [networks,networks]}
+        context_dict = {'networks': [networks,networks],'deshboardActive': 'active'}
         return render(request, 'deshboard.html', context_dict)
 
 class ApplayPageView(TemplateView):
     def get(self, request, **kwargs):
-        return render(request, 'apply.html', context=None)
+        context_dict ={'applyActive':'active'}
+        return render(request, 'apply.html', context_dict)
+
+class TrainingPageView(TemplateView):
+    def get(self, request, **kwargs):
+        context_dict = {'trainingActive':'active'}
+        return render(request, 'training.html', context_dict)
+
 
 
 # class DeshboardPageView(TemplateView):

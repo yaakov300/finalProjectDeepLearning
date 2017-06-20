@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from model.networks import Network
-from model.classes import Classes
+# from model.classes import Classes
 import global_var
 
 count = global_var

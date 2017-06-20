@@ -1,10 +1,9 @@
-from time import sleep
+import json
+
+import yaml
 
 from CNN_layer_alexNet import *
-import dataset
-import yaml
-import json
-from pprint import pprint
+from src.classified import dataset
 
 #-------------------Define arguments-----------------
 
@@ -164,17 +163,14 @@ y_pred_cls = tf.argmax(y_pred, dimension=1)
 
 #-------------------train the network network-----------------
 session = tf.Session()
-#sess.run(tf.global_variables_initializer())
 
 # cost function
 cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits=layer_fc3, labels=y_true)
 cost = tf.reduce_mean(cross_entropy)
 
 # optimizer gradient descent optimizier
-# AdamOptimizer(learning_rate=1e-4)
 optimizer = tf.train.AdamOptimizer(learning_rate=1e-4).minimize(cost)
 
-# optimizer = tf.train.GradientDescentOptimizer(0.001).minimize(cost)
 # for print accuracy
 correct_prediction = tf.equal(y_pred_cls, y_true_cls)
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32),name='accuracy')

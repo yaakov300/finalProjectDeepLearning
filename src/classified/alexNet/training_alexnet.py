@@ -1,8 +1,7 @@
-from time import sleep
+import yaml
 
 from CNN_layer_alexNet import *
-import dataset
-import yaml
+from src.classified import dataset
 
 #-------------------Define arguments-----------------
 

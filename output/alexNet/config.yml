@@ -1,12 +1,22 @@
 network:
-  name: "alexNet"
-  num_examples: 50
+  classes:
+  - !!python/unicode 'animals'
+  - !!python/unicode 'people'
+  - !!python/unicode 'cars'
   img_size: 128
+  name: !!python/unicode 'alexNet'
+  name_of_layer:
+  - !!python/unicode 'conv1'
+  - !!python/unicode 'conv2'
+  - !!python/unicode 'conv3'
+  - !!python/unicode 'conv4'
+  - !!python/unicode 'conv5'
+  - !!python/unicode 'flatten'
+  - !!python/unicode 'fc1'
+  - !!python/unicode 'fc2'
+  - !!python/unicode 'fc3'
+  num_examples: 51
   number_of_conv_layer: 5
-  number_of_flatten_layer: 1
-  number_of_fc_layer: 3
+  number_of_fc_layer: 1
+  number_of_flatten_layer: 3
   number_of_iteration: 6000
-  name_of_layer: ['conv1','conv2','conv3','conv4','conv5','flatten','fc1','fc2','fc3']
-  classes : ['animals', 'people', 'cars']
-
-

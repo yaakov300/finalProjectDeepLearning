@@ -194,7 +194,7 @@ def cheack_image(image_file):
   # tf.app.run(argv=[sys.argv[0]] + unparsed)
   maybe_download_and_extract()
   image = (image_file if image_file else
-           os.path.join(FLAGS.model_dir, 'Monkey-Photos.jpg'))
+           os.path.join(FLAGS.model_dir, 'Monkey-Photos2.jpg'))
 
   return run_inference_on_image(image)
 
@@ -218,7 +218,7 @@ parser.add_argument(
 parser.add_argument(
   '--image_file',
   type=str,
-  default='Monkey-Photos.jpg',
+  default='Monkey-Photos2.jpg',
   help='Absolute path to image file.'
 )
 parser.add_argument(

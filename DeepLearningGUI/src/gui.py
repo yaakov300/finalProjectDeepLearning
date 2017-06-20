@@ -14,7 +14,7 @@ class Example(Frame):
         self.initUI()
 
     def initUI(self):
-        self.filename = "Monkey-Photos.jpg"
+        self.filename = "Monkey-Photos2.jpg"
         self.parent.title("Windows")
         self.pack(fill=BOTH, expand=True)
 
@@ -34,7 +34,7 @@ class Example(Frame):
         runbtn = Button(self, text="Run", command=self.run)
         runbtn.grid(row=1, column=0, sticky= W + S, padx=10)
 
-        image = Image.open("Monkey-Photos.jpg")
+        image = Image.open("Monkey-Photos2.jpg")
         image = image.resize((370, 330), Image.ANTIALIAS)
         bardejov = ImageTk.PhotoImage(image)
         self.imglabel = Label(self, image=bardejov)

@@ -1,8 +1,7 @@
 {% extends "base.html" %}
-{% load script %}
-
+{% load static %}
 {% block header %}Training new Network{% endblock %}
-{% block head %}<script src="{% script 'training.js' %}"></script>{% endblock %}
+{% block head %}<script src="{% static 'scripts/training.js' %}"></script>{% endblock %}
 {% block content %}
 
 

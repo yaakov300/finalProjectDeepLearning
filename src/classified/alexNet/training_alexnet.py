@@ -210,6 +210,11 @@ def optimize(num_iterations):
                               y_true: y_valid_batch}
 
         session.run(optimizer, feed_dict=feed_dict_train)
+        # print "weights_conv1: {weights_conv}".format(weights_conv=session.run(tf.shape(weights_conv1)))
+        # print "weights_conv2: {weights_conv}".format(weights_conv=session.run(tf.shape(weights_conv2)))
+        # print "weights_conv3: {weights_conv}".format(weights_conv=session.run(tf.shape(weights_conv3)))
+        # print "weights_conv4: {weights_conv}".format(weights_conv=session.run(tf.shape(weights_conv4)))
+        # print "weights_conv5: {weights_conv}".format(weights_conv=session.run(tf.shape(weights_conv4)))
         # msgcost = "cost = {}"
         # print msgcost.format(session.run(cost, feed_dict=feed_dict_validate))
         # if i % int(data.train.num_examples / batch_size) == 0:

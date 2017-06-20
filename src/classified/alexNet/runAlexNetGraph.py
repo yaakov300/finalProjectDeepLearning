@@ -1,9 +1,8 @@
-import tensorflow as tf
-import dataset
 import numpy as np
-import matplotlib.pyplot as plt
-import math
+import tensorflow as tf
 import yaml
+
+from src.classified import dataset
 
 #load config
 config = yaml.safe_load(open("config.yml"))
@@ -22,7 +21,7 @@ classes = config['training']['classes']
 num_classes = len(classes)
 num_channels = config['training']['num_channels']
 img_size_flat = img_size * img_size * num_channels
-test_images, test_ids, test_label = dataset.read_test_set(test_path, img_size,classes)
+test_images, test_ids, test_label = dataset.read_test_set(test_path, img_size, classes)
 num_images = len(test_images)
 print "len = {}".format(len(test_images))
 

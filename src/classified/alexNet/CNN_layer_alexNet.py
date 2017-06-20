@@ -2,7 +2,7 @@ import tensorflow as tf
 
 
 def new_conv_layer(input, filter_size, stride_size ,num_filters, num_input_channels,
-                   use_pooling=True, pooling_filter_size= "NONE", pooling_strides_size= "NONE"):
+                   layer_name,use_pooling=True, pooling_filter_size= "NONE", pooling_strides_size= "NONE"):
     shape = [filter_size, filter_size, num_input_channels, num_filters]
     weights = new_weights(shape=shape)
     biases = new_biases(length=num_filters)
@@ -10,7 +10,8 @@ def new_conv_layer(input, filter_size, stride_size ,num_filters, num_input_chann
     layer = tf.nn.conv2d(input=input,
                          filter=weights,
                          strides=[1, stride_size, stride_size, 1],
-                         padding="VALID")
+                         padding="VALID",
+                         name=layer_name)
 
     layer += biases
 
@@ -18,13 +19,18 @@ def new_conv_layer(input, filter_size, stride_size ,num_filters, num_input_chann
         layer = tf.nn.max_pool(value=layer,
                                ksize=[1, pooling_filter_size, pooling_filter_size, 1],
                                strides=[1, pooling_strides_size, pooling_strides_size, 1],
-                               padding='VALID')
+                               padding='VALID',
+                               name= layer_name+"_pool")
+
+    if (pooling_filter_size != None and pooling_strides_size != None):
+        tf.pad(layer,[[pooling_strides_size,pooling_strides_size],[pooling_filter_size,pooling_filter_size],
+                      [pooling_filter_size,pooling_filter_size],[pooling_strides_size,pooling_strides_size]],"CONSTANT")
 
     layer = tf.nn.relu(layer)
     return layer,weights
 
 
-def flatten_layer(layer):
+def new_flatten_layer(layer):
     layer_shape = layer.get_shape()
     num_features = layer_shape[1:4].num_elements()
 

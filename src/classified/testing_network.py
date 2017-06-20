@@ -74,11 +74,17 @@ def testing_network(dict_network):
         feed_dict_testing = {x: x_batch, y_true: y_test_images}
         pred = sess.run(y_pred, feed_dict=feed_dict_testing)
 
-        msg = ""
+        # msg = ""
+        # for i in range(num_classes):
+        #     msg += classes[i] + " = {:6.3%}, ".format(pred[0][i])
+        # # print msg+"\n"
+        # return msg
+
+        dict_to_return = {}
         for i in range(num_classes):
-            msg += classes[i] + " = {:6.3%}, ".format(pred[0][i])
-        # print msg+"\n"
-        return msg
+            dict_to_return.update({classes[i]: "{:6.3%}".format(pred[0][i])})
+        return dict_to_return
+
 
         #num_images = len(test_images)
         # print "len = {}".format(len(test_images))

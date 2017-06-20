@@ -1,12 +1,12 @@
 import json
-import cv2
-import tensorflow as tf
-import dataset
-import numpy as np
-import matplotlib.pyplot as plt
 import math
+
+import matplotlib.pyplot as plt
+import numpy as np
+import tensorflow as tf
 import yaml
 
+from src.classified import dataset
 
 #init
 
@@ -30,7 +30,7 @@ folder = config['visualizing']['folder'] #constant value
 num_channels = config['training']['num_channels'] #constant value
 img_size = network['data']['imgSize']
 img_size_flat = img_size * img_size * num_channels
-test_images, test_ids, test_label = dataset.read_test_set(test_path, img_size,folder)
+test_images, test_ids, test_label = dataset.read_test_set(test_path, img_size, folder)
 
 #get tensor from graph
 x= graph.get_tensor_by_name(config['tensor_name']['input_x']+":0")

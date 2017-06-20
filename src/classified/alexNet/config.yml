@@ -7,7 +7,7 @@ training:
   #classes : ['test']
   classes : ['animals', 'people', 'cars']
   #TODO repalce batch size.
-  batch_size : 16
+  batch_size : 1
   # validation split
   validation_size : .2
 
@@ -21,7 +21,8 @@ training:
 tensor_name:
   input_x: 'x'
   input_y_true: 'y_true'
-  input_y_pred: 'y_pred'
+  y_pred: 'y_pred'
+  accuracy: 'accuracy'
 
 visualizing:
     folder: ['visual']

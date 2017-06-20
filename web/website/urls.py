@@ -11,4 +11,4 @@ urlpatterns = [
     url(r'^train/$', views.TrainingPageView.as_view()),
     url(r'^visualition/$', views.visualitionPageView.as_view()),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-urlpatterns += script(settings.SCRIPT_URL, document_root=settings.SCRIPT_ROOT)
+# urlpatterns += script(settings.SCRIPT_URL, document_root=settings.SCRIPT_ROOT)

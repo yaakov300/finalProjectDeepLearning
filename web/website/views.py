@@ -33,7 +33,11 @@ class TrainingPageView(TemplateView):
         context_dict = {'trainingActive':'active'}
         return render(request, 'training.html', context_dict)
 
-
+class visualitionPageView(TemplateView):
+    def get(self, request, **kwargs):
+        context_dict = {'visualitionActive': 'active'}
+        return render(request, 'visualition.html', context_dict)
+        # visualition
 
 # class DeshboardPageView(TemplateView):
 #     def get(self, request, **kwargs):

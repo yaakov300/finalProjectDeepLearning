@@ -4,29 +4,35 @@ import dataset
 import numpy as np
 import yaml
 import os
+from django.conf import settings
+
 
 def testing_network(dict_network):
-
     # int
 
     # load config
     network = dict_network
-    config = yaml.safe_load(open(os.path.join(base_dir,"config.yml")))
-    modelConfig = yaml.safe_load(open(os.path.join(base_dir,config['training']['output_training_path'] + network['model']['configPath']+"config.yml")))
+    config = yaml.safe_load(open(os.path.join(base_dir, "config.yml")))
+    modelConfig = yaml.safe_load(open(
+        os.path.join(root_dir, config['training']['output_training_path'], network['model']['configPath'],
+                     "config.yml")))
 
     # create graph
     sess = tf.Session()
-    saver = tf.train.import_meta_graph(config['training']['output_training_path']+network['model']['path']+network['model']['name'])
-    saver.restore(sess, tf.train.latest_checkpoint(config['training']['output_training_path']+network['model']['path']+'./'))
+    saver = tf.train.import_meta_graph(os.path.join(root_dir,
+                                                    config['training']['output_training_path'],
+                                                    network['model']['path'], network['model']['name']))
+    saver.restore(sess, tf.train.latest_checkpoint(os.path.join(root_dir,
+                                                                config['training']['output_training_path'],
+                                                                network['model']['path'], './')))
     graph = tf.get_default_graph()
 
     # read image for test
     num_channels = config['training']['num_channels']
     img_size = modelConfig['network']['img_size']
 
-
     def test():
-        #test_path = config['testing']['path_testing']
+        # test_path = config['testing']['path_testing']
         test_path = config['testing']['path_testing']
         classes = modelConfig['network']['classes']
         num_classes = len(classes)
@@ -48,8 +54,6 @@ def testing_network(dict_network):
         accuracy = sess.run(accuracy, feed_dict=feed_dict_testing)
         msg = "{:6.3%}".format(accuracy)
         return msg
-
-
 
     def use():
         test_path = config['testing']['path_using']
@@ -86,7 +90,7 @@ def testing_network(dict_network):
         return dict_to_return
 
 
-        #num_images = len(test_images)
+        # num_images = len(test_images)
         # print "len = {}".format(len(test_images))
         # for j in range(num_images):
         #     msg = ""
@@ -99,12 +103,14 @@ def testing_network(dict_network):
         if network['testing']:
             return test()
         else:
-             return use()
+            return use()
 
     return run()
 
+
 base_dir = os.path.dirname(__file__)
-with open(os.path.join(base_dir,'testing.json')) as data_file:
-     network = json.load(data_file)
-     data_file.close()
-     print testing_network(network)
+root_dir = settings.CLASSIFIED_SETTING['app']['root']
+with open(os.path.join(base_dir, 'testing.json')) as data_file:
+    network = json.load(data_file)
+    data_file.close()
+    print testing_network(network)

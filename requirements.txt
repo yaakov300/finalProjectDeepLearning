@@ -1,4 +1,7 @@
 numpy
-scikit-learn
 scipy
-Theano
+sklearn
+pyyaml
+opencv-python
+tensorflow
+django

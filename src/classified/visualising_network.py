@@ -7,12 +7,10 @@ import matplotlib.pyplot as plt
 import math
 import yaml
 from django.conf import settings
+base_dir = os.path.dirname(__file__)
+root_dir = settings.CLASSIFIED_SETTING['app']['root']
 
-
-def visual_network(dict_network):
-    # init
-
-    network = dict_network
+def visual_network(network):
     # load config
     config = yaml.safe_load(open(os.path.join(base_dir, "config.yml")))
     modelConfig = yaml.safe_load(
@@ -79,10 +77,9 @@ def visual_network(dict_network):
     return visualitzing()
 
 
-base_dir = os.path.dirname(__file__)
-root_dir = settings.CLASSIFIED_SETTING['app']['root']
+
 
 with open(os.path.join(base_dir, 'visualising.json')) as data_file:
-    network = json.load(data_file)
+    json_file = json.load(data_file)
     data_file.close()
-    print len(visual_network(network))
+    print len(visual_network(json_file))

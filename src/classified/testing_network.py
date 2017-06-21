@@ -6,12 +6,11 @@ import yaml
 import os
 from django.conf import settings
 
+base_dir = os.path.dirname(__file__)
+root_dir = settings.CLASSIFIED_SETTING['app']['root']
 
-def testing_network(dict_network):
-    # int
 
-    # load config
-    network = dict_network
+def testing_network(network):
     config = yaml.safe_load(open(os.path.join(base_dir, "config.yml")))
     modelConfig = yaml.safe_load(open(
         os.path.join(root_dir, config['training']['output_training_path'], network['model']['configPath'],
@@ -108,9 +107,7 @@ def testing_network(dict_network):
     return run()
 
 
-base_dir = os.path.dirname(__file__)
-root_dir = settings.CLASSIFIED_SETTING['app']['root']
 with open(os.path.join(base_dir, 'testing.json')) as data_file:
-    network = json.load(data_file)
+    json_file = json.load(data_file)
     data_file.close()
-    print testing_network(network)
+    print testing_network(json_file)

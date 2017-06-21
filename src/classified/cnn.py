@@ -5,8 +5,11 @@ import yaml
 from time import gmtime, strftime
 import src.classified.dataset
 from CNN_layer import *
-
+from django.conf import settings
 # region Define arguments
+
+root_dir = settings.CLASSIFIED_SETTING['app']['root']
+base_dir = os.path.dirname(__file__)
 
 layers = {}
 status_progress = {"status": None,
@@ -23,7 +26,7 @@ outpot_model = None
 count_conv_layer = 0
 count_flatten_layer = 0
 count_fc_layer = 0
-base_dir = os.path.dirname(__file__)
+
 
 # open network config
 with open(os.path.join(base_dir, 'alexnet.json')) as data_file:
@@ -31,15 +34,15 @@ with open(os.path.join(base_dir, 'alexnet.json')) as data_file:
     data_file.close()
 
 # load global config
-with open("config.yml", 'r') as stream:
+with open(os.path.join(base_dir, "config.yml"), 'r') as stream:
     config = yaml.load(stream)
 
 # Number of color channels for the images: 1 channel for gray-scale.
 num_channels = config['training']['num_channels']
 batch_size = config['training']['batch_size']
 # files path
-train_path = config['training']['training_path']
-output_training_path = config['training']['output_training_path']
+train_path = os.path.join(root_dir, config['training']['training_path'])
+output_training_path = os.path.join(root_dir, config['training']['output_training_path'])
 
 # image dimensions
 img_size = network_config["input"]["img_size"]
@@ -139,7 +142,7 @@ def init_layers():
 # region save network
 def create_folder():
     global outpot_folder
-    outpot_folder = config["training"]["output_training_path"]
+    outpot_folder = os.path.join(root_dir,config["training"]["output_training_path"])
     if not os.path.exists(outpot_folder):
         os.makedirs(outpot_folder)
     outpot_folder = os.path.join(outpot_folder, network_config["name"])

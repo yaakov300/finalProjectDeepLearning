@@ -43,9 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles', # Ensure a comma ends this line
+    'django.contrib.staticfiles',  # Ensure a comma ends this line
     'django.contrib.humanize',
-    'rest_framework', # Add this line
+    'rest_framework',  # Add this line
     'api',
     'website',
 ]
@@ -59,6 +59,21 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase',
+    }
+}
+
+CLASSIFIED_SETTING = {
+    'app': {
+        'root': '/Users/shimondavino/PycharmProjects/finalProjectDeepLearningNew',
+        'networks_dir': '/output/networks',
+        'src': 'src/classified',
+    }
+}
 
 ROOT_URLCONF = 'web.urls'
 
@@ -132,6 +147,5 @@ STATICFILES_DIRS = (
 )
 
 STATIC_ROOT = os.path.join(STATICFILES_DIRS, '/static/')
-SCRIPT_ROOT = (os.path.join(STATIC_ROOT,'/scripts/'),)
+SCRIPT_ROOT = (os.path.join(STATIC_ROOT, '/scripts/'),)
 SCRIPT_URL = '/scripts/'
-

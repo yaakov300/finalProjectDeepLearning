@@ -16,7 +16,7 @@ count = global_var
 # Create your views here.
 class HomePageView(TemplateView):
     def get(self, request, **kwargs):
-        networks = Network()
+
         print networks.name
         context_dict = {'networks': [networks,networks],'deshboardActive': 'active'}
         return render(request, 'deshboard.html', context_dict)
@@ -38,6 +38,8 @@ class visualitionPageView(TemplateView):
         context_dict = {'visualitionActive': 'active'}
         return render(request, 'visualition.html', context_dict)
         # visualition
+
+
 
 # class DeshboardPageView(TemplateView):
 #     def get(self, request, **kwargs):

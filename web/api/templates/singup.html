@@ -1,0 +1,12 @@
+{% extends 'api_base.html' %}
+{% use statics %}
+{% block javascript %}
+<script src="{% static 'scripts/test.js' %}"></script>
+{% endblock %}
+{% block content %}
+  <form action="/create_post/" method="POST" id="post-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Sign up</button>
+  </form>
+{% endblock %}

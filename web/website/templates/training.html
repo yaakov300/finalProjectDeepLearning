@@ -1,21 +1,35 @@
 {% extends "base.html" %}
 {% load static %}
+{% block javascript %}
+<script src="{% static 'scripts/training.js' %}"></script>{% endblock %}
 {% block header %}Training new Network{% endblock %}
-{% block head %}<script src="{% static 'scripts/training.js' %}"></script>{% endblock %}
+
 {% block content %}
 
 
-<div>
-    <div class="well">
-        <form id="trainNetwork" class="form" action="">
-            <label class="control-label">Upload network configuration</label>
-            <input id="input-1" type="file" class="file">
-            <button id="start">start training</button>
-        </form>
+<div class="well">
+    <div id="uploadFile">
+        <div>
+            <label class="control-label" for="selectFiles">Upload network configuration</label>
+            <input type="file" id="selectFiles" value="Import"/>
+        </div>
+        <div>
+            <textarea id="json_content" title="json content"></textarea>
+        </div>
+        <div>
+            <button id="import" title="Import network json configuration">Import</button>
+        </div>
     </div>
-    <div id="networkDetails">
+</div>
+<div id="networkDetails" class="well">
+    <label for="result">Train status</label>
+    <br>
+    <div><textarea id="result" title="start train result"></textarea></div>
+    <div>
+        <button id="start" title="start training network">start training</button>
+    </div>
+</div>
 
-    </div>
 </div>
 
 

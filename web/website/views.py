@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from model.networks import Network
-# from model.classes import Classes
+from model.classes import Classes
 import global_var
 
 count = global_var
@@ -16,7 +16,7 @@ count = global_var
 # Create your views here.
 class HomePageView(TemplateView):
     def get(self, request, **kwargs):
-
+        networks = Network()
         print networks.name
         context_dict = {'networks': [networks,networks],'deshboardActive': 'active'}
         return render(request, 'deshboard.html', context_dict)

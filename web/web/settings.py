@@ -70,7 +70,7 @@ DATABASES = {
 CLASSIFIED_SETTING = {
     'app': {
         'root': '/Users/shimondavino/PycharmProjects/finalProjectDeepLearningNew',
-        'networks_dir': '/output/networks',
+        'networks_dir': 'output',
         'src': 'src/classified',
     }
 }

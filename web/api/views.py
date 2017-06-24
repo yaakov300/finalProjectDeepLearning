@@ -5,6 +5,7 @@ import importlib
 
 from django.http import HttpResponse
 from django.shortcuts import render, render_to_response
+from django.views.generic import CreateView
 
 from rest_framework import generics
 from .serializers import *
@@ -14,63 +15,17 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 
-import os, sys, inspect
+import os
 
-# tmp = os.path.join(settings.CLASSIFIED_SETTING['app']['root'], settings.CLASSIFIED_SETTING['app']['src'])
-tmp = settings.CLASSIFIED_SETTING['app']['root']
-print tmp
-# realpath() will make your script run, even if you symlink it :)
-cmd_folder = os.path.realpath(os.path.abspath(os.path.split(inspect.getfile(inspect.currentframe()))[0]))
-if cmd_folder not in sys.path:
-    sys.path.insert(0, cmd_folder)
+import json
 
-# use this if you want to include modules from a subfolder
-cmd_subfolder = os.path.realpath(
-    os.path.abspath(os.path.join(os.path.split(inspect.getfile(inspect.currentframe()))[0], tmp)))
-if cmd_subfolder not in sys.path:
-    sys.path.insert(0, cmd_subfolder)
+root_dir = settings.CLASSIFIED_SETTING['app']['root']
+base_dir = os.path.dirname(__file__)
+network_dir = os.path.join(root_dir, settings.CLASSIFIED_SETTING['app']['networks_dir'])
 
-import src.classified.cnn
+model_app = Networks()
+model_app.load_existing_networks()
 
-
-
-def import_app_src(src, name):
-    filename = "directory/module.py"
-    directory = src
-    module_name = name
-    module_name = os.path.splitext(module_name)[0]
-
-    path = list(sys.path)
-    sys.path.insert(0, directory)
-    try:
-        module = __import__(module_name)
-    finally:
-        sys.path[:] = path
-
-
-class CreateView(generics.ListCreateAPIView):
-    """This class defines the create behavior of our rest api."""
-    queryset = Bucketlist.objects.all()
-    serializer_class = BucketlistSerializer
-
-    def perform_create(self, serializer):
-        """Save the post data when creating a new bucketlist."""
-        serializer.save()
-
-
-# class CreateNetrorkView(generics.ListCreateAPIView):
-#     """This class defines the create behavior of our rest api."""
-#     queryset = Network.objects.all()
-#     serializer_class = NetworklistSerializer
-#
-#     def perform_create(self, serializer):
-#         """Save the post data when creating a new bucketlist."""
-#         serializer.save()
-
-
-class SignUpView(CreateView):
-    template_name = 'signup.html'
-    form_class = UserCreationForm
 
 
 def hello(request):
@@ -82,10 +37,11 @@ def networkList(request):
     print request if request == None else "shimon"
     # user = request.user
     if request.method == "POST" and request.is_ajax():
-        name = request.POST['name']
-        network = Network(name)
-        status = "Good"
-        return render_to_response('hello.html', {'variable': network.name})
+        data = request.body.decode('utf-8')
+        network_dict = json.loads(data)
+        model_app.add_network(network_dict['name'], network_dict)
+
+        return HttpResponse(network_dict['name'] + " status:\n" )
     else:
         status = "Bad"
         return render_to_response('hello.html', {'variable': status})

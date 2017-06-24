@@ -13,15 +13,10 @@ root_dir = settings.CLASSIFIED_SETTING['app']['root']
 base_dir = os.path.dirname(__file__)
 
 
-def addCnn(network_config):
+def create_new_cnn(network_config):
     layers = {}
     status_progress = {"status": None,
                        "log": []}
-    progress = []
-
-    status = {0: "loading",
-              1: "training",
-              2: "complete"}
 
     layers_name = []
     outpot_folder = None
@@ -61,7 +56,7 @@ def addCnn(network_config):
     y_true = tf.placeholder(tf.float32, shape=[None, num_classes], name=config["tensor_name"]["input_y_true"])
     status_progress["status"] = {"last_modified": strftime("%Y-%m-%d %H:%M:%S", gmtime()),
                                  "num_of_complete_iterations": 0,
-                                 "state": status[0]}
+                                 "state": 0}
 
     # endregion
 
@@ -78,15 +73,15 @@ def addCnn(network_config):
                                         pooling_strides_size=layer_parameters["pooling_strides_size"],
                                         padding_filter_size=layer_parameters["padding_filter_size"],
                                         padding_strides_size=layer_parameters["padding_strides_size"])
-        global count_conv_layer
-        count_conv_layer += 1
+        # global count_conv_layer
+        # count_conv_layer += 1
         print "init conv\n"
         return [1, layer, weights]
 
     def flatten_layer(layer_parameters, prev_layer):
         layer, num_features = new_flatten_layer(prev_layer[1])
-        global count_flatten_layer
-        count_flatten_layer += 1
+        # global count_flatten_layer
+        # count_flatten_layer += 1
         print "init flatten layer\n"
         return [2, layer, num_features, None]
 
@@ -97,8 +92,8 @@ def addCnn(network_config):
                              num_outputs=outputs,
                              use_relu=layer_parameters["use_relu"])
         print "init fc layer\n"
-        global count_fc_layer
-        count_fc_layer += 1
+        # global count_fc_layer
+        # count_fc_layer += 1
         return [3, layer, outputs, None]
 
     def first_layer(layer_parameters, prev_layer):
@@ -147,7 +142,10 @@ def addCnn(network_config):
         outpot_model = os.path.join(outpot_model, "modle")
 
     def save_network_config_file():
+        global outpot_folder
+        print "&&& " + outpot_folder
         file_config = os.path.join(outpot_folder, "config.yml")
+        print "%%%%    "+file_config
         file_data = dict(network=dict(
             name=network_config["name"],
             num_examples=data.train.num_examples,
@@ -164,6 +162,7 @@ def addCnn(network_config):
             outfile.close()
 
     def update_network_progress_file():
+        global outpot_folder
         file_progress = os.path.join(outpot_folder, "progress.p")
         with open(file_progress, 'wb') as fp:
             pickle.dump(status_progress, fp)
@@ -209,10 +208,11 @@ def addCnn(network_config):
                 {"training_accuracy": acc, "validation_accuracy": val_acc, "validation_loss": val_loss})
 
         def save_session(sess, complete_iterations):
+            global  outpot_model
             saver.save(sess, outpot_model)
             status_progress["status"]["last_modified"] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
             status_progress["status"]["num_of_complete_iterations"] = complete_iterations
-            status_progress["status"]["state"] = status[1] if complete_iterations < total_iterations else status[2]
+            status_progress["status"]["state"] = 1 if complete_iterations < total_iterations else 3
             update_network_progress_file()
 
         def optimize(num_iterations):
@@ -258,10 +258,8 @@ def addCnn(network_config):
     update_network_progress_file()
     run_network()
 
-
 # open network config
-with open(os.path.join(base_dir, 'alexnet.json')) as data_file:
-    json_file = json.load(data_file)
-    data_file.close()
-    addCnn(json_file)
-
+# with open(os.path.join(base_dir, 'alexnet.json')) as data_file:
+#     json_file = json.load(data_file)
+#     data_file.close()
+#     addCnn(json_file)

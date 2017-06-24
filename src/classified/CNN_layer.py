@@ -31,14 +31,12 @@ def new_conv_layer(input, filter_size, stride_size, num_filters, num_input_chann
     layer = tf.nn.relu(layer)
     return layer, weights
 
-
 def new_flatten_layer(layer):
     layer_shape = layer.get_shape()
     num_features = layer_shape[1:4].num_elements()
 
     layer_flat = tf.reshape(layer, [-1, num_features])
     return layer_flat, num_features
-
 
 def new_fc_layer(input,
                  num_inputs,

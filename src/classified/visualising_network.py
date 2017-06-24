@@ -1,5 +1,4 @@
 import os
-import json
 import tensorflow as tf
 import dataset
 import numpy as np
@@ -10,12 +9,12 @@ from django.conf import settings
 base_dir = os.path.dirname(__file__)
 root_dir = settings.CLASSIFIED_SETTING['app']['root']
 
-def visual_network(network):
+def visual_network(modelConfig,network):
     # load config
     config = yaml.safe_load(open(os.path.join(base_dir, "config.yml")))
-    modelConfig = yaml.safe_load(
-        open(os.path.join(root_dir, config['training']['output_training_path'], network['model']['configPath'],
-                          "config.yml")))
+    # modelConfig = yaml.safe_load(
+    #     open(os.path.join(root_dir, config['training']['output_training_path'], network['model']['configPath'],
+    #                       "config.yml")))
 
     # create graph
     sess = tf.Session()
@@ -78,8 +77,8 @@ def visual_network(network):
 
 
 
-
-with open(os.path.join(base_dir, 'visualising.json')) as data_file:
-    json_file = json.load(data_file)
-    data_file.close()
-    print len(visual_network(json_file))
+#
+# with open(os.path.join(base_dir, 'visualising.json')) as data_file:
+#     json_file = json.load(data_file)
+#     data_file.close()
+#     print len(visual_network(json_file))

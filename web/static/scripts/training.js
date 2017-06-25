@@ -4,18 +4,32 @@ function start() {
     $("#import").click(function() {
         if (!!result) {
             $.ajax({
-                url: "/home/",
+                url: "/train/start/",
                 type: "POST",
-                data: result,
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(result),
+
                 success: function(result) {
                     $("#result").val(result);
+                    $('.networks').css('display','none');
+                    $('#networkDetails').css('display','block');
                 }
             });
+        }else{
+            alert('import file first!!');
         }
     });
 
     $("#selectFiles").change(function(e) {
         onChange(e);
+    });
+
+    $('#start').on('click',function(){
+        $("#result").val("started training wait for redirect to dashboard page its will take few second");
+        setTimeout(function(){
+            window.location = '/';
+        },4000);
+
     });
 
     function onChange(event) {

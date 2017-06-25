@@ -2,11 +2,13 @@
     <ul>
         <li>Name: {{network.name}}</li>
 
-        <li class="status">Status: {{network.status}}
+        <li class="status">Status:
             {% if network.status == 0 %}
             <div class="led-blue"></div>
             {% elif network.status == 1 %}
             <div class="led-yellow"></div>
+            {% elif network.status == 2 %}
+            <div class="led-red"></div>
             {% elif network.status == 3 %}
             <div class="led-green"></div>
             {% endif %}

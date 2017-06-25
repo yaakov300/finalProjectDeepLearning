@@ -11,20 +11,20 @@ from api import global_var
 # Create your views here.
 model_app = global_var.app_networks
 
+
 # Create your views here.
 class HomePageView(TemplateView):
     def get(self, request, **kwargs):
-
-
+        for net in model_app.networks:
+            net.update_network_progress()
         context_dict = {'networks': model_app.networks, 'deshboardActive': 'active'}
         return render(request, 'deshboard.html', context_dict)
 
 
 class ApplayPageView(TemplateView):
     def get(self, request, **kwargs):
-        classes = Classes().classes_name_pred
-        print classes
-        context_dict = {'classes': classes, 'applyActive': 'active'}
+        network_tree = model_app.get_networks_tree()
+        context_dict = {'networks': network_tree, 'applyActive': 'active'}
         return render(request, 'apply.html', context_dict)
 
 
@@ -36,10 +36,6 @@ class TrainingPageView(TemplateView):
 
 class visualitionPageView(TemplateView):
     def get(self, request, **kwargs):
-        context_dict = {'visualitionActive': 'active'}
+        network_tree = model_app.get_networks_tree()
+        context_dict = {'networks': network_tree, 'visualitionActive': 'active'}
         return render(request, 'visualition.html', context_dict)
-        # visualition
-
-        # class DeshboardPageView(TemplateView):
-        #     def get(self, request, **kwargs):
-        #         return render(request, 'deshboard.html', context=None)

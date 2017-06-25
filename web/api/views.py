@@ -19,13 +19,13 @@ import os
 
 import json
 
+import global_var
+
 root_dir = settings.CLASSIFIED_SETTING['app']['root']
 base_dir = os.path.dirname(__file__)
 network_dir = os.path.join(root_dir, settings.CLASSIFIED_SETTING['app']['networks_dir'])
 
-model_app = Networks()
-model_app.load_existing_networks()
-
+model_app = global_var.app_networks
 
 
 def hello(request):
@@ -33,7 +33,7 @@ def hello(request):
 
 
 @csrf_exempt
-def networkList(request):
+def train_network(request):
     print request if request == None else "shimon"
     # user = request.user
     if request.method == "POST" and request.is_ajax():
@@ -41,7 +41,11 @@ def networkList(request):
         network_dict = json.loads(data)
         model_app.add_network(network_dict['name'], network_dict)
 
-        return HttpResponse(network_dict['name'] + " status:\n" )
+        return HttpResponse(network_dict['name'] + " status:\n")
     else:
         status = "Bad"
         return render_to_response('hello.html', {'variable': status})
+
+
+def render_network_list():
+    render_to_response("networks,html", {'networks': model_app.networks})

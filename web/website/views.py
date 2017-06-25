@@ -4,24 +4,19 @@ from __future__ import unicode_literals
 # website/views.py
 from django.shortcuts import render
 from django.views.generic import TemplateView
-from model.networks import Network
+
 # from model.classes import Classes
-import global_var
-
-count = global_var
-
+from api import global_var
 
 # Create your views here.
+model_app = global_var.app_networks
 
 # Create your views here.
 class HomePageView(TemplateView):
     def get(self, request, **kwargs):
-        status = {0: "load",
-                  1: "training",
-                  2: "complete"}
-        networks1 = Network('alexNet', 95, 'training', 1600, 0.97, 0.05, 0.95)
-        networks2 = Network('TEST', 81, 'training', 20, 0.67, 0.350, 0.62)
-        context_dict = {'networks': [networks2, networks1], 'deshboardActive': 'active'}
+
+
+        context_dict = {'networks': model_app.networks, 'deshboardActive': 'active'}
         return render(request, 'deshboard.html', context_dict)
 
 

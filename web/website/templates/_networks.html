@@ -1,14 +1,25 @@
-<div class="well">
+<div class="">
     <ul>
         <li>Name: {{network.name}}</li>
-        <li>Status: {{network.status}}</li>
+
+        <li class="status">Status: {{network.status}}
+            {% if network.status == 0 %}
+            <div class="led-blue"></div>
+            {% elif network.status == 1 %}
+            <div class="led-yellow"></div>
+            {% elif network.status == 3 %}
+            <div class="led-green"></div>
+            {% endif %}
+        </li>
+
         <li>Iterations completed: {{network.iterations_completed}}</li>
         <li>Training accuracy: {{network.training_accuracy}}</li>
         <li>Validation accuracy: {{network.validation_accuracy}}</li>
-        <li>Validation loss: {{network.loss}}</li>
+        <li>Validation loss: {{network.validation_loss}}</li>
 
         <li>
             <button id="test_{{network.name}}">testing network</button>
         </li>
     </ul>
+
 </div>

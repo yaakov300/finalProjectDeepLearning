@@ -7,9 +7,7 @@ urlpatterns = {
     # url(r'^networks/$', CreateNetrorkView.as_view(), name="createNetwork"),
     # url(r'^signup/$', SignUpView.as_view(), name='signup'),
     url(r'^hello/', hello),
-    url(r'^home/', networkList),
-
-
+    url(r'^train/start/', train_network),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
 {% block header %}Visualition{% endblock %}
-{% block head %}
+{% block javascript %}
 <script src="{% static 'scripts/gallery.js' %}"></script>
+<script src="{% static 'scripts/visualition.js' %}"></script>
+{% endblock %}
+{% block css %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/gallery.css' %}">
 {% endblock %}
 {% block content %}
@@ -19,19 +22,23 @@
             </div>
             <div>
                 <label class="control-label">Choose network:</label>
-                <select class="selectpicker">
-                    <option>alexNet</option>
-                    <option>imageNet</option>
-                    <option>runing</option>
+                <select id="network_select" class="selectpicker">
+                    {% for net in networks %}
+                    <option value="{{net.name}}">{{net.name}}</option>
+                    {% endfor %}
                 </select>
+
             </div>
             <div>
                 <label class="control-label">Choose layer:</label>
-                <select class="selectpicker">
-                    <option>conv_1</option>
-                    <option>conv_2</option>
-                    <option>conv_3</option>
+                {% for net in networks %}
+                <select name="{{net.name}}" class="selectpicker layers">
+                    {% for name in net.conv_layers %}
+                    <option>{{name}}</option>
+                    {% endfor %}
                 </select>
+                {% endfor %}
+
             </div>
             <div>
                 <label class="control-label">Choose step:</label>

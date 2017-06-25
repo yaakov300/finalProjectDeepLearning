@@ -8,6 +8,7 @@ urlpatterns = {
     # url(r'^signup/$', SignUpView.as_view(), name='signup'),
     url(r'^hello/', hello),
     url(r'^train/start/', train_network),
+    url(r'^apply/test/', aplly_test),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)

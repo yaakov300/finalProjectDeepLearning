@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import importlib
 
+from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse
 from django.shortcuts import render, render_to_response
 from django.views.generic import CreateView
@@ -49,3 +50,20 @@ def train_network(request):
 
 def render_network_list():
     render_to_response("networks,html", {'networks': model_app.networks})
+
+
+@csrf_exempt
+def aplly_test(request):
+    if request.method == "POST" and request.is_ajax():
+        status = "Success"
+        myfile = request.FILES['myfile']
+        fs = FileSystemStorage()
+        filename = fs.save(myfile.name, myfile)
+        # uploaded_file_url = fs.url(filename)
+        # return render(request, 'core/simple_upload.html', {
+        #     'uploaded_file_url': uploaded_file_url
+        # })
+        return HttpResponse(" status:\n")
+    else:
+        status = "Bad"
+        return HttpResponse(" status:\n")

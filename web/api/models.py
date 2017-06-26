@@ -58,7 +58,8 @@ class Network:
 
     def start_training(self, network_config):
         if self.training_thread is None:
-            self.training_thread = Thread(target=cnn.create_new_cnn, args=(network_config,), name=network_config['name'])
+            self.training_thread = Thread(target=cnn.create_new_cnn, args=(network_config, 0,),
+                                          name=network_config['name'])
             self.training_thread.start()
             print r"++ start training {self.name} ++"
 
@@ -77,38 +78,39 @@ class Network:
                 print r"++ load progress {self.name} ++"
             if self.progress is not None:
                 p = self.progress
-                self.status = p["status"]["state"]
-                self.iterations_completed = p["status"]["num_of_complete_iterations"]
-                self.last_modified = p["status"]["last_modified"]
-                self.training_accuracy = p["log"][0]["training_accuracy"]
-                self.validation_accuracy = p["log"][0]["validation_accuracy"]
-                self.validation_loss = p["log"][0]["validation_loss"]
-                print r"++ load s\progress log {self.name} ++"
+                self.status = p["status"]["state"] if self.iterations_completed == self.config["network"][
+                    "number_of_iteration"] or self.training_thread is not None else 2
+        self.iterations_completed = p["status"]["num_of_complete_iterations"]
+        self.last_modified = p["status"]["last_modified"]
+        self.training_accuracy = p["log"][0]["training_accuracy"]
+        self.validation_accuracy = p["log"][0]["validation_accuracy"]
+        self.validation_loss = p["log"][0]["validation_loss"]
+        print r"++ load s\progress log {self.name} ++"
 
     def get_status(self):
         return status[self.status]
 
-    def testing(self, model_name):
+    def testing(self, model_name=None):
         if self.status is 0:
             return "network still loading state"
         net = {
             "model": {
                 "configPath": self.name,
                 "path": os.path.join(self.name, "model"),
-                "name": model_name
+                "name": model_name if not None else os.path.join(self.name, "model/model.meta")
             },
             "testing": True
         }
         return testing_network.testing_network(self.config, net)
 
-    def running(self, img, model_name):
+    def running(self, img, model_name=None):
         if self.status is 0:
             return "network still loading state"
         net = {
             "model": {
                 "configPath": self.name,
                 "path": os.path.join(self.name, "model"),
-                "name": model_name
+                "name": model_name if not None else os.path.join(self.name, "model/model.meta")
             },
             "testing": False,
             "img": img
@@ -158,6 +160,13 @@ class Networks:
             if net.name == name:
                 return net
         return None
+
+    def get_networks_tree(self):
+        networks_tree = []
+        for net in self.networks:
+            networks_tree.append({'name': net.name, 'classes': net.config["network"]["classes"],
+                                  'conv_layers': net.config["network"]["name_of_layer"]})
+        return networks_tree
 
     def load_existing_networks(self):
         networks_name = [item for item in os.listdir(network_dir) if os.path.isdir(os.path.join(network_dir, item))]

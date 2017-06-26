@@ -2,7 +2,7 @@ training:
   #image channels
   num_channels : 3
   #TODO repalce batch size.
-  batch_size : 1
+  batch_size : 16
 
   #model files
   model_path: 'model_files/'
@@ -27,5 +27,5 @@ visualizing:
 testing:
   folder: ['test']
   path_testing: 'data/test_data'
-  path_using: 'data/test_data_web'
+  path_using: 'web/static/temp'
 

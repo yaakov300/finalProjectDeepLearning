@@ -117,14 +117,14 @@ class Network:
         }
         return testing_network.testing_network(self.config, net)
 
-    def visualising(self, layer_name, f_index, f_step, return_steps):
+    def visualising(self, layer_name, f_index, f_step, return_steps, model_name):
         if self.status is 0:
             return "network still loading state"
         net = {
             "model": {
                 "configPath": self.name,
                 "path": os.path.join(self.name, "model"),
-                "name": "alexNet_model1370.meta"
+                "name": model_name if not None else os.path.join(self.name, "model/model.meta")
             },
             "data": {
                 "imgSize": self.config['img_size'],

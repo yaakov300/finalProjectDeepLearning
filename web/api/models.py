@@ -70,6 +70,7 @@ class Network:
                 self.config = yaml.load(stream)
                 print r"++ load config {self.name} ++"
 
+    # def get_model_
     def update_network_progress(self):
         progress_file = os.path.join(network_dir, self.name, "progress.p")
         if os.path.exists(progress_file):
@@ -97,7 +98,7 @@ class Network:
             "model": {
                 "configPath": self.name,
                 "path": os.path.join(self.name, "model"),
-                "name": model_name if not None else os.path.join(self.name, "model/model.meta")
+                "name": os.path.join(self.name, "model/model.meta") if model_name is None else model_name
             },
             "testing": True
         }
@@ -110,7 +111,7 @@ class Network:
             "model": {
                 "configPath": self.name,
                 "path": os.path.join(self.name, "model"),
-                "name": model_name if not None else os.path.join(self.name, "model/model.meta")
+                "name": os.path.join(self.name, "model/model.meta") if model_name is None else model_name
             },
             "testing": False,
             "img": img
@@ -124,7 +125,7 @@ class Network:
             "model": {
                 "configPath": self.name,
                 "path": os.path.join(self.name, "model"),
-                "name": model_name if not None else os.path.join(self.name, "model/model.meta")
+                "name": os.path.join(self.name, "model/model.meta") if model_name is None else model_name
             },
             "data": {
                 "imgSize": self.config['img_size'],
@@ -132,10 +133,6 @@ class Network:
             },
             "layers": {
                 "Names": layer_name
-            },
-            "filter": {
-                "indexFilter": f_index,
-                "stepFilter": f_step
             },
             "return": {
                 "steps": return_steps

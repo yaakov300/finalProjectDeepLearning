@@ -117,7 +117,7 @@ class Network:
         }
         return testing_network.testing_network(self.config, net)
 
-    def visualising(self, layer_name, f_index, f_step, return_steps, model_name):
+    def visualising(self, layer_name, return_steps, model_name=None):
         if self.status is 0:
             return "network still loading state"
         net = {

@@ -2,7 +2,7 @@ training:
   #image channels
   num_channels : 3
   #TODO repalce batch size.
-  batch_size : 16
+  batch_size : 1
 
   #model files
   model_path: 'model_files/'
@@ -22,7 +22,7 @@ tensor_name:
 
 visualizing:
   folder: ['visual']
-  path: 'data/test_data_web'
+  path: 'web/static/temp'
 
 testing:
   folder: ['test']

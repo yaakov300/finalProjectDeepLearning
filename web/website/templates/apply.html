@@ -3,24 +3,26 @@
 {% block header %}Apply{% endblock %}
 {% block head %}
 {% block javascript %}
-<script src="{% static 'scripts/apply.js' %}"></script>{% endblock %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/button.css' %}">
+<script src="{% static 'scripts/apply.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'css/button.css' %}">{% endblock %}
+
 {% endblock %}
 {% block content %}
 <div>
-    <form id="uploadimage" action="" method="post" enctype="multipart/form-data">
+    <form class="row" id="uploadimage" action="" method="post" enctype="multipart/form-data">
         <div class="col-sm-5">
-            <div class="form-group well">
+            <div class="form-group well" style="margin: 10px;">
 
-                <div style="margin: 10px;">
+                <div >
                     <label class="control-label" for="selectFiles">Select File:</label>
                     <input id="selectFiles" type="file" class="file btn" name="myfile">
                 </div>
                 <div style="margin: 10px;">
-                    <select class="selectpicker btn">
-                        <option>alexNet</option>
-                        <option>imageNet</option>
-                        <option>runing</option>
+                    <label class="control-label">Choose network:</label><br>
+                    <select id="network_select" class="selectpicker">
+                        {% for net in networks %}
+                        <option value="{{net.name}}">{{net.name}}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div style="margin: 10px;">
@@ -28,26 +30,19 @@
                 </div>
 
             </div>
-            <!--<div>-->
-                <!--<div id="pred" class="well">-->
-                      <!--<div id="image_preview"><img id="previewing" src="noimage.png"/></div>-->
-                    <!--&lt;!&ndash;<ul>&ndash;&gt;-->
-                    <!--&lt;!&ndash;{% for key, value in classes.items %}&ndash;&gt;-->
-                    <!--&lt;!&ndash;<li>{{key}}: {{value}}</li>&ndash;&gt;-->
-                    <!--&lt;!&ndash;{% endfor %}&ndash;&gt;-->
-
-                    <!--&lt;!&ndash;&lt;!&ndash;{% for net in networks %}&ndash;&gt;&ndash;&gt;-->
-                    <!--&lt;!&ndash;&lt;!&ndash;{% include "_networks.html" with network=net only %}&ndash;&gt;&ndash;&gt;-->
-                    <!--&lt;!&ndash;&lt;!&ndash;{% endfor %}&ndash;&gt;&ndash;&gt;-->
-                    <!--&lt;!&ndash;</ul>&ndash;&gt;-->
-                <!--</div>-->
-            <!--</div>-->
         </div>
-        <div id="image" class="col-sm-7">
+        <div class="col-sm-7">
+            <img id="image" src="" style="width:304px;height:228px;">
         </div>
     </form>
-</div>
+    <div class="row">
+        <div class="well col-sm-5" id="pred_place" style="margin: 20px;">
+            <label>result:</label>
+            <div class="loader" style="display: none"></div>
 
+        </div>
+    </div>
+</div>
 
 
 {% endblock %}

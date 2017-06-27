@@ -1,6 +1,7 @@
 $(document).ready(function (e) {
     $('#uploadimage').on('submit',(function(e) {
         e.preventDefault();
+        $('.loader').show();
         var formData = new FormData($('#uploadimage').get(0));
         network_selected = $('#network_select').find(':selected').text();
         formData.append('network_name', network_selected);
@@ -15,11 +16,17 @@ $(document).ready(function (e) {
             processData: false,
             success:function(data){
                 console.log("success");
-                console.log(data);
+                $.each(data, function(k, v) {
+                    //display the key and value pair
+                    console.log(k + ' is ' + v);
+                     $("#pred_place").append("<p>"+k+": "+v+"</p>");
+                });
+                $('.loader').hide();
             },
             error: function(data){
                 console.log("error");
-                console.log(data);
+
+                $('.loader').hide()
             }
         });
 //        $("#selectFiles").val("");

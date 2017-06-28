@@ -8,6 +8,7 @@ import yaml
 from django.conf import settings
 base_dir = os.path.dirname(__file__)
 root_dir = settings.CLASSIFIED_SETTING['app']['root']
+import scipy.misc
 
 def visual_network(modelConfig,network):
     # load config
@@ -20,14 +21,15 @@ def visual_network(modelConfig,network):
     sess = tf.Session()
     saver = tf.train.import_meta_graph(os.path.join(root_dir,
                                                     config['training']['output_training_path'],
-                                                    network['model']['path'], network['model']['name']))
+                                                    network['model']['name']))
     saver.restore(sess, tf.train.latest_checkpoint(os.path.join(root_dir,
                                                                 config['training']['output_training_path'],
                                                                 network['model']['path'], './')))
     graph = tf.get_default_graph()
 
     # read images
-    test_path = config['visualizing']['path']  # constant value
+    # test_path = config['visualizing']['path']  # constant value
+    test_path = os.path.join(root_dir, config['visualizing']['path'])
     folder = config['visualizing']['folder']  # constant value
     num_channels = config['training']['num_channels']  # constant value
     img_size = modelConfig['network']['img_size']
@@ -68,10 +70,16 @@ def visual_network(modelConfig,network):
 
     def imagesNNFilter(units):
         images = []
+        images_name = []
         filters = units.shape[3]
         for j in xrange(0, filters, network['return']['steps']):
             images.append(units[0, :, :, j])
-        return images;
+
+            image_name = "outfile{0}{1}.jpg".format(j,network['layers']['Names'])
+            images_name.append(image_name)
+            image_path = os.path.join(root_dir, config['visualizing']['path'], "visual_gallery",image_name)
+            scipy.misc.imsave(image_path, units[0, :, :, j])
+        return images_name;
 
     return visualitzing()
 

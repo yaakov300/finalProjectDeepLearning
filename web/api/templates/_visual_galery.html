@@ -1,0 +1,7 @@
+{% load static %}
+{% for name in names_images %}
+    <div class="col-sm-4 well">
+        <label>{{name}}</label>
+        <img src="{% static 'temp/visual_gallery/' %}{{name}}"  style="width:100%; max-height:100%;">
+    </div>
+{% endfor %}

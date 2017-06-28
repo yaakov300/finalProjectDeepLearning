@@ -16,9 +16,10 @@ $(document).ready(function (e) {
             processData: false,
             success:function(data){
                 console.log("success");
+                $("#pred_place").empty()
                 $.each(data, function(k, v) {
                     //display the key and value pair
-                    console.log(k + ' is ' + v);
+//                    console.log(k + ' is ' + v);
                      $("#pred_place").append("<p>"+k+": "+v+"</p>");
                 });
                 $('.loader').hide();
@@ -35,7 +36,7 @@ $(document).ready(function (e) {
 
     $("#selectFiles").on("change", function() {
         console.log('change')
-        $("#imageUploadForm").submit();
+//        $("#imageUploadForm").submit();
         readURL(this);
     });
 

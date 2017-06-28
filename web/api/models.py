@@ -84,17 +84,24 @@ class Network:
         lock = os.path.join(network_dir, self.name, "lock.txt")
         while os.path.exists(lock):
             time.sleep(1)
-        p = self.progress
+        p = None
         if os.path.exists(progress_file):
             with open(progress_file, 'rb') as f:
                 p = pickle.load(f)
                 print r"++ load progress {self.name} ++"
-        if self.progress is None:
+        elif self.progress is None:
+            self.iterations_completed = 0
+            self.training_accuracy = 0
+            self.validation_accuracy = 0
+            self.validation_loss = 0
+            self.status = 0
+        if p is not None:
             self.iterations_completed = p["status"]["num_of_complete_iterations"]
             self.last_modified = p["status"]["last_modified"]
-            self.training_accuracy = p["log"][0]["training_accuracy"]
-            self.validation_accuracy = p["log"][0]["validation_accuracy"]
-            self.validation_loss = p["log"][0]["validation_loss"]
+            if len(p["log"]) != 0:
+                self.training_accuracy = p["log"][0]["training_accuracy"]
+                self.validation_accuracy = p["log"][0]["validation_accuracy"]
+                self.validation_loss = p["log"][0]["validation_loss"]
             self.status = p["status"]["state"] if self.iterations_completed == 0 or \
                                                   self.training_thread is not None or \
                                                   self.iterations_completed == \
@@ -121,6 +128,9 @@ class Network:
         if self.training_thread is not None:
             stop = os.path.join(network_dir, self.name, 'stop.p')
             open(stop, 'w')
+            return True
+        return False
+
 
     def running(self, img, model_name=None):
         if self.status is 0:
@@ -197,18 +207,23 @@ class Networks:
                                   'conv_layers': net.config["network"]["name_of_layer"]})
         return networks_tree
 
-
-
     def load_existing_networks(self):
         self.networks = []
         networks_name = [item for item in os.listdir(network_dir) if os.path.isdir(os.path.join(network_dir, item))]
         for name in networks_name:
-
             net = Network(name, None)
             net.load_network_config()
             net.update_network_progress()
             self.networks.append(net)
 
+    def testing_network(self,name):
+        net = self.get_network_by_name(name)
+        if net.config is None:
+            net.load_network_config()
+        return net.testing()
+
+
+    testing_network.do_not_call_in_templates = True
     add_network.do_not_call_in_templates = True
     get_network_by_name.do_not_call_in_templates = True
     get_networks_tree.do_not_call_in_templates = True

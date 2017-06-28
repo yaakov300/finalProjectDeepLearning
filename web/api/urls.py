@@ -10,6 +10,7 @@ urlpatterns = {
     url(r'^api/start/', train_network),
     url(r'^train/continue/', continue_train_network),
     url(r'^train/testing/', testing_network),
+    url(r'^train/stop/', stop_train_network),
     url(r'^apply/test/', aplly_test),
 }
 

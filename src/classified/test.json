@@ -1,11 +1,17 @@
 {
-  "name":"test",
-  "layers":[
-    {
+  "name": "TEST2",
 
+  "runnig_config": {
+    "num_iterations": 6000,
+    "num_iterations_for_saving": 3,
+    "validation_size": 0.2,
+    "early_stopping": null
+  },
+  "layers": [
+    {
       "type": 0,
-      "structure":{
-        "name":"conv1",
+      "structure": {
+        "name": "conv1",
         "num_filters": 96,
         "num_input_channels": 3,
         "conv_filter_size": 12,
@@ -20,7 +26,7 @@
     {
       "type": 1,
       "structure": {
-        "name":"conv2",
+        "name": "conv2",
         "num_filters": 256,
         "num_input_channels": 96,
         "conv_filter_size": 5,
@@ -35,7 +41,7 @@
     {
       "type": 1,
       "structure": {
-        "name":"conv3",
+        "name": "conv3",
         "num_filters": 384,
         "num_input_channels": 256,
         "conv_filter_size": 3,
@@ -50,7 +56,7 @@
     {
       "type": 1,
       "structure": {
-        "name":"conv4",
+        "name": "conv4",
         "num_filters": 384,
         "num_input_channels": 384,
         "conv_filter_size": 3,
@@ -64,8 +70,8 @@
     },
     {
       "type": 1,
-      "structure":{
-        "name":"conv5",
+      "structure": {
+        "name": "conv5",
         "num_filters": 256,
         "num_input_channels": 384,
         "conv_filter_size": 3,
@@ -78,39 +84,42 @@
       }
     },
     {
-
       "type": 2,
-      "structure":{
+      "structure": {
         "name": "flatten"
       }
     },
     {
       "type": 3,
-      "structure":{
+      "structure": {
         "name": "fc1",
-        "num_outputs":4096,
-        "use_relu":true
+        "num_outputs": 4096,
+        "use_relu": true
       }
     },
     {
       "type": 3,
-      "structure":{
+      "structure": {
         "name": "fc2",
-        "num_outputs":4096,
-        "use_relu":true
+        "num_outputs": 4096,
+        "use_relu": true
       }
     },
     {
       "type": 4,
-      "structure":{
+      "structure": {
         "name": "fc3",
-        "use_relu":false
+        "use_relu": false
       }
     }
   ],
-  "runnig_config":{
-    "num_iterations": 6000,
-    "num_iterations_for_saving": 3
+  "input": {
+    "img_size": 128,
+    "classes": [
+      "animals",
+      "people",
+      "cars"
+    ]
   }
 }
 

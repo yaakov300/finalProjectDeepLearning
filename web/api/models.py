@@ -122,7 +122,7 @@ class Network:
             stop = os.path.join(network_dir, self.name, 'stop.p')
             open(stop, 'w')
 
-    def running(self, img, model_name=None):
+    def running(self, model_name=None):
         if self.status is 0:
             return "network still loading state"
         net = {
@@ -132,7 +132,6 @@ class Network:
                 "name": os.path.join(self.name, "model/model.meta") if model_name is None else model_name
             },
             "testing": False,
-            "img": img
         }
         return testing_network.testing_network(self.config, net)
 
@@ -146,8 +145,8 @@ class Network:
                 "name": os.path.join(self.name, "model/model.meta") if model_name is None else model_name
             },
             "data": {
-                "imgSize": self.config['img_size'],
-                "numClasses": len(self.config['classes'])
+                # "imgSize": self.config['img_size'],
+                "numClasses": len(self.config["network"]['classes'])
             },
             "layers": {
                 "Names": layer_name

@@ -102,22 +102,21 @@ def render_network_list():
 @csrf_exempt
 def aplly_test(request):
     if request.method == "POST" and request.is_ajax():
-
+        remove_temp()
         myfile = request.FILES['myfile']
-        fs = FileSystemStorage(location='static/temp/test/')
+        fs = FileSystemStorage(location = 'static/temp/test/')
 
         filename = fs.save(myfile.name, myfile)
         network_name = request.POST['network_name']
         test_network = model_app.get_network_by_name(network_name)
         result_use = test_network.running()
-        # print result_use['cars']
         uploaded_file_url = fs.url(filename)
-        print uploaded_file_url
+        # print uploaded_file_url
         # return render(request, 'core/simple_upload.html', {
         #     'uploaded_file_url': uploaded_file_url
         # })
 
-        jsonResponse = {'statu': 'Success'}
+        jsonResponse = {'statu':'Success'}
         return JsonResponse(result_use)
 
     else:
@@ -125,11 +124,10 @@ def aplly_test(request):
         return HttpResponse(" status: {} \n".format(status))
 
 
-
 @csrf_exempt
 def visualition_test(request):
     if request.method == "POST" and request.is_ajax():
-
+        remove_temp()
         myfile = request.FILES['myfile']
         fs = FileSystemStorage(location = 'static/temp/visual/')
         filename = fs.save(myfile.name, myfile)
@@ -138,18 +136,19 @@ def visualition_test(request):
         layer_name = request.POST['layer_select']
         select_step = int(request.POST['select-step'])
 
-        # print "network_name: {0}, layer_name: {1}, select_step {2}".format(network_name, layer_name, select_step)
+
         visual_network = model_app.get_network_by_name(network_name)
         result_visual = visual_network.visualising(layer_name = layer_name, return_steps = select_step)
-        print "############# len: {} #############3".format(len(result_visual))
-
-        return HttpResponse([1,2])
-
-
-        # jsonResponse = {'statu':'Success'}
-        # result_use = jsonResponse
-        # return JsonResponse(result_use)
-
+        return render_to_response("_visual_galery.html", {'names_images': result_visual})
     else:
         status = "Bad"
         return HttpResponse(" status: {} \n".format(status))
+
+
+def remove_temp():
+    temp_opath = os.path.join(root_dir,'web/static/temp')
+    directorys = ["test", "visual", "visual_gallery"]
+    for directory in directorys:
+        for file in os.listdir(os.path.join(temp_opath,directory)):
+            if file.endswith('.jpg') or file.endswith('.png'):
+                os.remove(os.path.join(temp_opath,directory,file))

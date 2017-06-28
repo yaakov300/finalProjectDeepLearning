@@ -204,8 +204,7 @@ class Networks:
             if net.config is None:
                 net.load_network_config()
             networks_tree.append({'name': net.name, 'classes': net.config["network"]["classes"],
-                                  'conv_layers': net.config["network"]["name_of_layer"][
-                                                 :net.config["network"]["number_of_conv_layer"]]})
+                                  'conv_layers': net.config["network"]["name_of_layer"][:5]})
         return networks_tree
 
     def load_existing_networks(self):

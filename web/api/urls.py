@@ -12,6 +12,7 @@ urlpatterns = {
     url(r'^train/testing/', testing_network),
     url(r'^train/stop/', stop_train_network),
     url(r'^apply/test/', aplly_test),
+    url(r'^visualition/test/', visualition_test),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)

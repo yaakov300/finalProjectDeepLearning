@@ -99,9 +99,9 @@ class Network:
             self.iterations_completed = p["status"]["num_of_complete_iterations"]
             self.last_modified = p["status"]["last_modified"]
             if len(p["log"]) != 0:
-                self.training_accuracy = p["log"][0]["training_accuracy"]
-                self.validation_accuracy = p["log"][0]["validation_accuracy"]
-                self.validation_loss = p["log"][0]["validation_loss"]
+                self.training_accuracy = p["log"][-1]["training_accuracy"]
+                self.validation_accuracy = p["log"][-1]["validation_accuracy"]
+                self.validation_loss = p["log"][-1]["validation_loss"]
             self.status = p["status"]["state"] if self.iterations_completed == 0 or \
                                                   self.training_thread is not None or \
                                                   self.iterations_completed == \
@@ -130,7 +130,6 @@ class Network:
             open(stop, 'w')
             return True
         return False
-
 
     def running(self, model_name=None):
         if self.status is 0:
@@ -202,8 +201,11 @@ class Networks:
     def get_networks_tree(self):
         networks_tree = []
         for net in self.networks:
+            if net.config is None:
+                net.load_network_config()
             networks_tree.append({'name': net.name, 'classes': net.config["network"]["classes"],
-                                  'conv_layers': net.config["network"]["name_of_layer"]})
+                                  'conv_layers': net.config["network"]["name_of_layer"][
+                                                 :net.config["network"]["number_of_conv_layer"]]})
         return networks_tree
 
     def load_existing_networks(self):
@@ -215,12 +217,11 @@ class Networks:
             net.update_network_progress()
             self.networks.append(net)
 
-    def testing_network(self,name):
+    def testing_network(self, name):
         net = self.get_network_by_name(name)
         if net.config is None:
             net.load_network_config()
         return net.testing()
-
 
     testing_network.do_not_call_in_templates = True
     add_network.do_not_call_in_templates = True

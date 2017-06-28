@@ -8,6 +8,7 @@
 {% block css %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/indicator.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/deshboard.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/button.css' %}">
 {% endblock %}
 {% block content %}
 <div>
@@ -16,10 +17,7 @@
         {% for net in networks %}
         <div class="network well">
             {% include "_networks.html" with network=net only %}
-            <div class="testingResults">
-                <label>{{net.name}} testing results</label>
-                <span>{{net.testing}}</span>
-            </div>
+
         </div>
         {% endfor %}
     </div>

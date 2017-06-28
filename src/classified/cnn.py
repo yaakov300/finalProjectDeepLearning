@@ -254,7 +254,8 @@ def create_new_cnn(network_config, mode, import_layers=None):
 
             # print(msg.format(epoch + 1, acc, val_acc, val_loss))
             network_dict["progress"]["log"].append(
-                {"training_accuracy": acc, "validation_accuracy": val_acc, "validation_loss": val_loss})
+                {"training_accuracy": "{:>6.1%}".format(acc), "validation_accuracy": "{:>6.1%}".format(val_acc),
+                 "validation_loss": "{:.3f}".format(val_loss)})
 
         def save_session(sess, complete_iterations):
             global outpot_folder, num_of_complete_iterations, outpot_model

@@ -22,10 +22,10 @@ tensor_name:
 
 visualizing:
   folder: ['visual']
-  path: 'data/test_data_web'
+  path: 'web/static/temp'
 
 testing:
   folder: ['test']
   path_testing: 'data/test_data'
-  path_using: 'data/test_data_web'
+  path_using: 'web/static/temp'
 

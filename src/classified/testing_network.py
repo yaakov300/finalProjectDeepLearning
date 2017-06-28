@@ -20,7 +20,7 @@ def testing_network(modelConfig,network):
     sess = tf.Session()
     saver = tf.train.import_meta_graph(os.path.join(root_dir,
                                                     config['training']['output_training_path'],
-                                                    network['model']['path'], network['model']['name']))
+                                                    network['model']['name']))
     saver.restore(sess, tf.train.latest_checkpoint(os.path.join(root_dir,
                                                                 config['training']['output_training_path'],
                                                                 network['model']['path'], './')))
@@ -32,7 +32,7 @@ def testing_network(modelConfig,network):
 
     def test():
         # test_path = config['testing']['path_testing']
-        test_path = config['testing']['path_testing']
+        test_path = os.path.join(root_dir, config['testing']['path_testing'])
         classes = modelConfig['network']['classes']
         num_classes = len(classes)
         img_size_flat = img_size * img_size * num_channels
@@ -55,10 +55,10 @@ def testing_network(modelConfig,network):
         return msg
 
     def use():
-        test_path = config['testing']['path_using']
+        test_path = os.path.join(root_dir,config['testing']['path_using'])
         classes = modelConfig['network']['classes']
         num_classes = len(classes)
-        folder = config['visualizing']['folder']
+        folder = config['testing']['folder']
 
         img_size_flat = img_size * img_size * num_channels
         test_images, test_ids, test_label = dataset.read_test_set(test_path, img_size, folder)

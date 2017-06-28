@@ -6,4 +6,8 @@ $(document).ready(function(){
         $('.layers').removeAttr('style');
         $("[name="+selected+"]").css('display','block');
     });
+
+     for (i=1;i<=20;i++){
+        $("#select-step").append($('<option></option>').val(i).html(i))
+    }
 });

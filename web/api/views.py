@@ -35,17 +35,62 @@ def hello(request):
 
 @csrf_exempt
 def train_network(request):
-    print request if request == None else "shimon"
     # user = request.user
     if request.method == "POST" and request.is_ajax():
         data = request.body.decode('utf-8')
         network_dict = json.loads(data)
-        model_app.add_network(network_dict['name'], network_dict)
-
-        return HttpResponse(network_dict['name'] + " status:\n")
+        if model_app.add_network(network_dict['name'], network_dict):
+            global_var.update_app_networks(model_app.networks)
+            return HttpResponse(network_dict['name'] + " complete loading file \n started training wait for redirect "
+                                                       "to dashboard page its will take few second")
+        else:
+            return HttpResponse("error")
     else:
-        status = "Bad"
-        return render_to_response('hello.html', {'variable': status})
+        return HttpResponse("error")
+
+
+@csrf_exempt
+def continue_train_network(request):
+    if request.method == "POST" and request.is_ajax():
+        network_name = request.body
+        net = model_app.get_network_by_name(network_name)
+        if net is not None:
+            net.continue_training()
+            return {"status": True}
+            global_var.update_app_networks(model_app.networks)
+        else:
+            return {"status": False}
+    else:
+        return {"status": False}
+
+
+@csrf_exempt
+def testing_network(request):
+    if request.method == "POST" and request.is_ajax():
+        network_name = request.body
+        net = model_app.get_network_by_name(network_name)
+        if net is not None:
+            net.testing()
+            return {"status": True, }
+        else:
+            return {"status": False, }
+    else:
+        return {"status": False, }
+
+
+@csrf_exempt
+def stop_testing_network(request):
+    if request.method == "POST" and request.is_ajax():
+        network_name = request.body
+        net = model_app.get_network_by_name(network_name)
+        if net is not None:
+            net.stop_training()
+            global_var.update_app_networks(model_app.networks)
+            return {"status": True, }
+        else:
+            return {"status": False, }
+    else:
+        return {"status": False, }
 
 
 def render_network_list():

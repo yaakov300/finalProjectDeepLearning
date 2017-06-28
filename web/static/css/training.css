@@ -1,0 +1,18 @@
+#json_content,#result{
+    margin: 0px;
+    width: 850px;
+    height: 350px;
+}
+
+#networkDetails{
+    display:none;
+}
+
+.networks,#networkDetails{
+    max-width: 900px;
+    margin-left: 80px;
+}
+
+h2{
+    text-align: center;
+}

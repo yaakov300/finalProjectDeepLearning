@@ -13,4 +13,30 @@ $(document).ready(function(){
         },3500);
 
     });
+
+    $('[id^="continue_"]').on('click', function() {
+        var networkName = $(this).parents('div:first').attr('net-data');
+        $.ajax({
+            url: "/train/continue/",
+            type: "POST",
+            contentType: 'application/json; charset=utf-8',
+            data: networkName,
+            success: function(result) {
+                alert(result);
+            }
+        });
+    });
+
+    $('[id^="stop_"]').on('click', function() {
+        var networkName = $(this).parents('div:first').attr('net-data');
+        $.ajax({
+            url: "train/stop/",
+            type: "POST",
+            contentType: 'application/json; charset=utf-8',
+            data: networkName,
+            success: function(result) {
+                alert(result);
+            }
+        });
+    });
 });

@@ -7,7 +7,9 @@ urlpatterns = {
     # url(r'^networks/$', CreateNetrorkView.as_view(), name="createNetwork"),
     # url(r'^signup/$', SignUpView.as_view(), name='signup'),
     url(r'^hello/', hello),
-    url(r'^train/start/', train_network),
+    url(r'^api/start/', train_network),
+    url(r'^train/continue/', continue_train_network),
+    url(r'^train/testing/', testing_network),
     url(r'^apply/test/', aplly_test),
 }
 

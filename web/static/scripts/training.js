@@ -4,15 +4,17 @@ function start() {
     $("#import").click(function() {
         if (!!result) {
             $.ajax({
-                url: "/train/start/",
+                url: "/api/start/",
                 type: "POST",
                 contentType: 'application/json; charset=utf-8',
                 data: JSON.stringify(result),
-
                 success: function(result) {
                     $("#result").val(result);
                     $('.networks').css('display','none');
                     $('#networkDetails').css('display','block');
+                    setTimeout(function(){
+                        window.location = '/';
+                    },4000);
                 }
             });
         }else{
@@ -22,14 +24,6 @@ function start() {
 
     $("#selectFiles").change(function(e) {
         onChange(e);
-    });
-
-    $('#start').on('click',function(){
-        $("#result").val("started training wait for redirect to dashboard page its will take few second");
-        setTimeout(function(){
-            window.location = '/';
-        },4000);
-
     });
 
     function onChange(event) {

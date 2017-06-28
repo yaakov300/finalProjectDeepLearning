@@ -1,4 +1,4 @@
-<div class="">
+<div class="" net-data="{{network.name}}">
     <ul>
         <li>Name: {{network.name}}</li>
 
@@ -20,8 +20,12 @@
         <li>Validation loss: {{network.validation_loss}}</li>
 
         <li>
+            {% if network.status == 2 %}
+            <button id="continue_{{network.name}}">continue training network</button>
+            {% elif network.status == 1 %}
+            <button id="stop_{{network.name}}">stop training network</button>
+            {% endif %}
             <button id="test_{{network.name}}">testing network</button>
         </li>
     </ul>
-
 </div>

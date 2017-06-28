@@ -1,0 +1,23 @@
+.status *{
+    display: inline-block;
+}
+
+li{
+    text-align: left !important
+}
+
+.network{
+    display: inline-block;
+    margin: 10px;
+    width: 350px;
+
+
+}
+
+.networks{
+    text-align: center;
+}
+
+.testingResults{
+    display:none;
+}

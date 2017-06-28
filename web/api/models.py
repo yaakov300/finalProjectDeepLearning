@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import os, sys, inspect
+import time
 import yaml
 from django.conf import settings
-import pickle
+import cPickle as pickle
 from threading import Thread
 
 root_dir = settings.CLASSIFIED_SETTING['app']['root']
@@ -63,6 +64,13 @@ class Network:
             self.training_thread.start()
             print r"++ start training {self.name} ++"
 
+    def continue_training(self):
+        if self.training_thread is None or not self.training_thread.is_alive():
+            self.training_thread = Thread(target=cnn.create_new_cnn, args=(self.config, 1,),
+                                          name=self.name)
+            self.training_thread.start()
+            print r"++ continue training {self.name} ++"
+
     def load_network_config(self):
         config_file = os.path.join(network_dir, self.name, "config.yml")
         if self.config is None and os.path.exists(config_file):
@@ -73,20 +81,25 @@ class Network:
     # def get_model_
     def update_network_progress(self):
         progress_file = os.path.join(network_dir, self.name, "progress.p")
+        lock = os.path.join(network_dir, self.name, "lock.txt")
+        while os.path.exists(lock):
+            time.sleep(1)
+        p = self.progress
         if os.path.exists(progress_file):
             with open(progress_file, 'rb') as f:
-                self.progress = pickle.load(f)
+                p = pickle.load(f)
                 print r"++ load progress {self.name} ++"
-            if self.progress is not None:
-                p = self.progress
-                self.status = p["status"]["state"] if self.iterations_completed == self.config["network"][
-                    "number_of_iteration"] or self.training_thread is not None else 2
-        self.iterations_completed = p["status"]["num_of_complete_iterations"]
-        self.last_modified = p["status"]["last_modified"]
-        self.training_accuracy = p["log"][0]["training_accuracy"]
-        self.validation_accuracy = p["log"][0]["validation_accuracy"]
-        self.validation_loss = p["log"][0]["validation_loss"]
-        print r"++ load s\progress log {self.name} ++"
+        if self.progress is None:
+            self.iterations_completed = p["status"]["num_of_complete_iterations"]
+            self.last_modified = p["status"]["last_modified"]
+            self.training_accuracy = p["log"][0]["training_accuracy"]
+            self.validation_accuracy = p["log"][0]["validation_accuracy"]
+            self.validation_loss = p["log"][0]["validation_loss"]
+            self.status = p["status"]["state"] if self.iterations_completed == 0 or \
+                                                  self.training_thread is not None or \
+                                                  self.iterations_completed == \
+                                                  self.config["network"]["number_of_iteration"] else 2
+            print r"++ load s\progress log {self.name} ++"
 
     def get_status(self):
         return status[self.status]
@@ -103,6 +116,11 @@ class Network:
             "testing": True
         }
         return testing_network.testing_network(self.config, net)
+
+    def stop_training(self):
+        if self.training_thread is not None:
+            stop = os.path.join(network_dir, self.name, 'stop.p')
+            open(stop, 'w')
 
     def running(self, img, model_name=None):
         if self.status is 0:
@@ -141,16 +159,30 @@ class Network:
 
         return visualising_network.visual_network(self.config, net)
 
+    start_training.do_not_call_in_templates = True
+    load_network_config.do_not_call_in_templates = True
+    update_network_progress.do_not_call_in_templates = True
+    get_status.do_not_call_in_templates = True
+    testing.do_not_call_in_templates = True
+    running.do_not_call_in_templates = True
+    visualising.do_not_call_in_templates = True
+    continue_training.do_not_call_in_templates = True
+    stop_training.do_not_call_in_templates = True
+
 
 class Networks:
     def __init__(self):
         self.networks = []
 
     def add_network(self, name, network_config=None):
-        net = Network(name, network_config)
-        net.load_network_config()
-        net.update_network_progress()
-        self.networks.append(net)
+        if not os.path.exists(os.path.join(network_dir, name)):
+            net = Network(name, network_config)
+            net.load_network_config()
+            net.update_network_progress()
+            self.networks.append(net)
+            return True
+        else:
+            return False
 
     def get_network_by_name(self, name):
         for net in self.networks:
@@ -165,7 +197,19 @@ class Networks:
                                   'conv_layers': net.config["network"]["name_of_layer"]})
         return networks_tree
 
+
+
     def load_existing_networks(self):
+        self.networks = []
         networks_name = [item for item in os.listdir(network_dir) if os.path.isdir(os.path.join(network_dir, item))]
-        for net in networks_name:
-            self.add_network(net)
+        for name in networks_name:
+
+            net = Network(name, None)
+            net.load_network_config()
+            net.update_network_progress()
+            self.networks.append(net)
+
+    add_network.do_not_call_in_templates = True
+    get_network_by_name.do_not_call_in_templates = True
+    get_networks_tree.do_not_call_in_templates = True
+    load_existing_networks.do_not_call_in_templates = True

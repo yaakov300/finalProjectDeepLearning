@@ -15,6 +15,7 @@ model_app = global_var.app_networks
 # Create your views here.
 class HomePageView(TemplateView):
     def get(self, request, **kwargs):
+        model_app.load_existing_networks()
         for net in model_app.networks:
             net.update_network_progress()
         context_dict = {'networks': model_app.networks, 'deshboardActive': 'active'}
